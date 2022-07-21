@@ -20,11 +20,11 @@ resource "keycloak_openid_client" "callisto_ui" {
 
   access_type = "PUBLIC"
 
-  standard_flow_enabled = true
+  standard_flow_enabled        = true
   direct_access_grants_enabled = false
   service_accounts_enabled     = false
-  root_url = var.base_url
-  admin_url = var.base_url
+  root_url                     = var.base_url
+  admin_url                    = var.base_url
   web_origins = [
     var.base_url
   ]
