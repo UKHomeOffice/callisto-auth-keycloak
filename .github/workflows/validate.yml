@@ -29,4 +29,4 @@ jobs:
 
     - name: Terraform Format
       id: fmt
-      run: terraform fmt -check -recursive
+      run: terraform fmt -check -recursive -detailed-exitcode
