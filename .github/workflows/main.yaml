@@ -7,7 +7,7 @@ jobs:
   terraform-plan-and-apply:
     defaults:
       run:
-        working-directory: ./terraform
+        working-directory: ./config
     runs-on: ubuntu-latest
     env:
       GITHUB_OWNER: ukhomeoffice
