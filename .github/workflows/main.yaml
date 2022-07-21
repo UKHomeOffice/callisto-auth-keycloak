@@ -30,4 +30,4 @@ jobs:
 
     - name: Terraform Apply
       id: apply
-      run: terraform apply -auto-approve tfplan
+      run: terraform apply -var-file="not_prod_realm_variables.tfvars" -auto-approve tfplan
