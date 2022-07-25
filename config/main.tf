@@ -1,3 +1,9 @@
+terraform {
+  backend "s3" {
+   
+  }
+}
+
 provider "keycloak" {
   # Variables in here must be defined locally before running the plan
   # client_id = $KEYCLOAK_CLIENT_ID
