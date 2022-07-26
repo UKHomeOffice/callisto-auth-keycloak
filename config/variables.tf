@@ -15,3 +15,28 @@ variable "client_name" {
   description = "The name of the client to be created"
   sensitive   = true
 }
+
+variable "tf_client_id" {
+  type        = string
+  description = "The name of the client to be created"
+  sensitive   = true
+}
+
+variable "tf_client_secret" {
+  type        = string
+  description = "The name of the client to be created"
+  sensitive   = true
+}
+
+variable "tf_realm" {
+  type        = string
+  description = "The name of the client to be created"
+  sensitive   = true
+}
+
+variable "tf_url" {
+  type        = string
+  description = "The name of the client to be created"
+  sensitive   = true
+}
+

@@ -6,10 +6,10 @@ terraform {
 
 provider "keycloak" {
   # Variables in here must be defined locally before running the plan
-  # client_id = $KEYCLOAK_CLIENT_ID
-  # client_secret = $KEYCLOAK_CLIENT_SECRET 
-  # realm = $KEYCLOAK_REALM (will default to master)
-  # url = $KEYCLOAK_URL
+  client_id = var.tf_client_id
+  client_secret = $var.tf_client_secret
+  realm = var.tf_realm
+  url =var.tf_url
 }
 
 data "keycloak_realm" "callisto_notprod_auth" {
@@ -19,7 +19,6 @@ data "keycloak_realm" "callisto_notprod_auth" {
 
 resource "keycloak_openid_client" "callisto_ui" {
   realm_id = data.keycloak_realm.callisto_notprod_auth.id
-
   client_id = var.client_id
   name      = var.client_name
   enabled   = true
