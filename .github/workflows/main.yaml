@@ -18,7 +18,7 @@ jobs:
 
     - name: Terraform Init
       id: init
-      run: terraform init -reconfigure -backend-config="region=${{ secrets.tf_be_region }}" -backend-config="access_key=${{ secrets.tf_be_access_key }}"  -backend-config="secret_key=${{ secrets.tf_be_secret_key }}" -backend-config="bucket=${{ secrets.tf_be_bucket }}"
+      run: terraform init -reconfigure -keycloak-config="client_id=${{ secrets.tf_kc_client_id }}" -keycloak-config="client_secret=${{ secrets.tf_kc_client_secret }}" -keycloak-config="realm=${{ secrets.tf_kc_realm }}" -keycloak-config="url=${{ secrets.tf_kc_url }}" -backend-config="region=${{ secrets.tf_be_region }}" -backend-config="access_key=${{ secrets.tf_be_access_key }}" -backend-config="secret_key=${{ secrets.tf_be_secret_key }}" -backend-config="bucket=${{ secrets.tf_be_bucket }}"
 
     - name: Terraform Validate
       id: validate
