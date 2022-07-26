@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-   
+    key    = "terraform/build/callisto-auth-keycloak"
   }
 }
 
