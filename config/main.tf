@@ -13,14 +13,14 @@ provider "keycloak" {
 }
 
 data "keycloak_realm" "callisto_notprod_auth" {
-  realm = "callisto-dev"
+  realm = var.tf_realm
 }
 
 
 resource "keycloak_openid_client" "callisto_ui" {
   realm_id  = data.keycloak_realm.callisto_notprod_auth.id
-  client_id = var.client_id
-  name      = var.client_name
+  client_id = "terraform-client"
+  name      = "Callisto SPA"
   enabled   = true
 
   access_type = "PUBLIC"
