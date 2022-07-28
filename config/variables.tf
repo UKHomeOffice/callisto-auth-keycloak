@@ -4,39 +4,26 @@ variable "base_url" {
   sensitive   = true
 }
 
-variable "client_id" {
-  type        = string
-  description = "The id of the client to be created"
-  sensitive   = true
-}
-
-variable "client_name" {
-  type        = string
-  description = "The name of the client to be created"
-  sensitive   = true
-}
-
 variable "tf_client_id" {
   type        = string
-  description = "The name of the client to be created"
+  description = "The id of the keycloak client to be used to perform the terraform actions"
   sensitive   = true
 }
 
 variable "tf_client_secret" {
   type        = string
-  description = "The name of the client to be created"
+  description = "The secret of the keycloak client to be used to perform the terraform actions"
   sensitive   = true
 }
 
 variable "tf_realm" {
   type        = string
-  description = "The name of the client to be created"
+  description = "The realm of the keycloak to perform the terraform actions on"
   sensitive   = true
 }
 
 variable "tf_url" {
   type        = string
-  description = "The name of the client to be created"
+  description = "The url of the keycloak to perform the terraform actions on"
   sensitive   = true
 }
-
