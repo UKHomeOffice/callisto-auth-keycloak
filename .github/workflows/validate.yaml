@@ -7,7 +7,8 @@ on:
     branches:
       - main
   schedule:
-    - cron: 35 11 * * *
+    - cron: '50 13 * * *'
+
 jobs:
   terraform-validate:
     defaults:
