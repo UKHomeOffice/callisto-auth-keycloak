@@ -26,7 +26,13 @@ jobs:
 
     - name: Terraform Plan
       id: plan
-      run: terraform plan -out=tfplan
+      run: terraform plan -out=tfplan -var-file="not_prod_realm_variables.tfvars" 
+      env:
+        TF_VAR_tf_client_id: ${{ secrets.tf_kc_client_id }}
+        TF_VAR_tf_client_secret: ${{ secrets.tf_kc_client_secret }}
+        TF_VAR_tf_realm: ${{ secrets.tf_kc_realm }}
+        TF_VAR_tf_url: ${{ secrets.tf_kc_url }}
+
 
     - name: Terraform Apply
       id: apply
