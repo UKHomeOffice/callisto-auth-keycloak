@@ -6,6 +6,8 @@ on:
   pull_request:
     branches:
       - main
+  schedule:
+    - cron: 35 11 * * *
 jobs:
   terraform-validate:
     defaults:
