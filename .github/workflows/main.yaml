@@ -5,7 +5,7 @@ on:
       - main
   schedule:
     - cron: 0 0 * * *
-
+    
 jobs:
   terraform-plan-and-apply:
     defaults:
