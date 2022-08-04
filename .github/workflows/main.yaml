@@ -29,7 +29,7 @@ jobs:
 
     - name: Terraform Plan
       id: plan
-      run: terraform plan -out=tfplan -var-file="not_prod_realm_variables.tfvars" 
+      run: terraform plan -out=tfplan
       env:
         TF_VAR_tf_client_id: ${{ secrets.tf_kc_client_id }}
         TF_VAR_tf_client_secret: ${{ secrets.tf_kc_client_secret }}
