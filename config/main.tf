@@ -13,15 +13,15 @@ provider "keycloak" {
 }
 
 resource "keycloak_realm" "realm" {
-  realm             = var.tf_realm
-  enabled           = true
-  display_name      = ""
-  display_name_html = ""
+  realm                       = var.tf_realm
+  enabled                     = true
+  display_name                = ""
+  display_name_html           = ""
   default_signature_algorithm = "RS256"
 
   access_code_lifespan = "1m0s"
 
-  ssl_required    = "external"
+  ssl_required = "external"
 
   security_defenses {
     headers {
