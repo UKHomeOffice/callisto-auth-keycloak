@@ -35,8 +35,12 @@ jobs:
         TF_VAR_tf_client_secret: ${{ secrets.tf_kc_client_secret }}
         TF_VAR_tf_realm: ${{ secrets.tf_kc_realm }}
         TF_VAR_tf_url: ${{ secrets.tf_kc_url }}
+        TF_VAR_callisto_url: ${{ secrets.tf_callisto_url }}
 
+    - name: Terraform Import
+      id: import
+      run: terraform import
 
     - name: Terraform Apply
       id: apply
-      run: terraform apply -input=false -auto-approve -input=false tfplan
+      run: terraform apply -input=false tfplan

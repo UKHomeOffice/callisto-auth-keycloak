@@ -22,8 +22,8 @@ variable "tf_url" {
   sensitive   = true
 }
 
-variable "cal_url" {
+variable "callisto_url" {
   type        = string
-  description = "The url of the deployed callisto instance"
+  description = "The url of the callisto server"
   sensitive   = true
 }
