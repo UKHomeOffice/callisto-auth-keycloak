@@ -6,6 +6,7 @@ on:
   pull_request:
     branches:
       - main
+  # This schedules this yaml file to run nightly at 00:00am UTC
   schedule:
     - cron: '0 0 * * *'
 

@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - main
-  # This schedule line sets this yaml file to run nightly at 00:00am UTC
+  # This schedules this yaml file to run nightly at 00:00am UTC
   schedule:
     - cron: 0 0 * * *
     
