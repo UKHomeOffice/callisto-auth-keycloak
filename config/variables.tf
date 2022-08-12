@@ -12,13 +12,13 @@ variable "tf_client_secret" {
 
 variable "tf_realm" {
   type        = string
-  description = "The realm of the keycloak to perform the terraform actions on"
+  description = "The realm of the keycloak instance to perform the terraform actions on"
   sensitive   = true
 }
 
 variable "tf_url" {
   type        = string
-  description = "The url of the keycloak to perform the terraform actions on"
+  description = "The url of the keycloak instance to perform the terraform actions on"
   sensitive   = true
 }
 

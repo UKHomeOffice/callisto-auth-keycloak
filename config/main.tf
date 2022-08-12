@@ -12,7 +12,7 @@ provider "keycloak" {
   url           = var.tf_url
 }
 
-resource "keycloak_realm" "realm" {
+resource "callisto" "realm" {
   realm                       = var.tf_realm
   enabled                     = true
   display_name                = ""
