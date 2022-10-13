@@ -12,17 +12,16 @@ resource "keycloak_realm" "callisto" {
   lifecycle {
     prevent_destroy = true
     ignore_changes = [
-      display_name
+      display_name,
+      display_name_html
     ]
   }
   realm   = var.callisto_realm
   enabled = true
 
-  access_code_lifespan = "1m0s"
-
-  ssl_required = "external"
-
-  login_theme = "govuk"
+  access_code_lifespan        = "1m0s"
+  default_signature_algorithm = "RS256"
+  ssl_required                = "external"
 
   security_defenses {
     headers {
