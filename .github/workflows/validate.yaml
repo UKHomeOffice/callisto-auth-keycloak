@@ -13,9 +13,6 @@ jobs:
       run:
         working-directory: ./config
     runs-on: ubuntu-latest
-    env:
-      GITHUB_OWNER: ukhomeoffice
-      GITHUB_TOKEN: ${{ secrets.pat }}
     steps:
     - uses: actions/checkout@v2
     - uses: hashicorp/setup-terraform@v2
