@@ -11,8 +11,10 @@ jobs:
         working-directory: ./config
     runs-on: ubuntu-latest
     env:
-      GITHUB_OWNER: ukhomeoffice
-      GITHUB_TOKEN: ${{ secrets.pat }}
+      KEYCLOAK_CLIENT_ID: ${{ secrets.tf_kc_client_id }}
+      KEYCLOAK_CLIENT_SECRET: ${{ secrets.tf_kc_client_secret }}
+      KEYCLOAK_REALM: ${{ secrets.tf_kc_realm }}
+      KEYCLOAK_URL: ${{ secrets.tf_kc_url }}
     steps:
     - uses: actions/checkout@v2
     - uses: hashicorp/setup-terraform@v2
@@ -27,13 +29,7 @@ jobs:
 
     - name: Terraform Plan
       id: plan
-      run: terraform plan -out=tfplan -var-file="not_prod_realm_variables.tfvars" 
-      env:
-        TF_VAR_tf_client_id: ${{ secrets.tf_kc_client_id }}
-        TF_VAR_tf_client_secret: ${{ secrets.tf_kc_client_secret }}
-        TF_VAR_tf_realm: ${{ secrets.tf_kc_realm }}
-        TF_VAR_tf_url: ${{ secrets.tf_kc_url }}
-
+      run: terraform plan -out=tfplan
 
     - name: Terraform Apply
       id: apply
