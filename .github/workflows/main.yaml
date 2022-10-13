@@ -35,4 +35,4 @@ jobs:
 
     - name: Terraform Apply
       id: apply
-      run: terraform apply -input=false -auto-approve -input=false tfplan -var "callisto_realm_display_name=Callisto Auth (notprod)"
+      run: terraform apply -input=false -auto-approve -input=false tfplan
