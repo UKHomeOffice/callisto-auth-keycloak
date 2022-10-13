@@ -12,11 +12,11 @@ resource "keycloak_realm" "callisto" {
   lifecycle {
     prevent_destroy = true
     ignore_changes = [
-        display_name
+      display_name
     ]
   }
-  realm        = var.callisto_realm
-  enabled      = true
+  realm   = var.callisto_realm
+  enabled = true
 
   access_code_lifespan = "1m0s"
 
