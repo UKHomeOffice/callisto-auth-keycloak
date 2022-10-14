@@ -1,4 +1,4 @@
-name: Build and Publish
+name: Detect Drift
 on:
   # This schedules this yaml file to run nightly at 00:00am UTC
   schedule:
