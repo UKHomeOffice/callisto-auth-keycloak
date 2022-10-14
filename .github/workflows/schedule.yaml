@@ -3,7 +3,8 @@ on:
   # This schedules this yaml file to run nightly at 00:00am UTC
   schedule:
     - cron: 0 0 * * *
-      
+  workflow_dispatch:
+
 jobs:
   terraform-plan-and-apply:
     defaults:
