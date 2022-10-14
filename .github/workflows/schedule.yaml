@@ -1,0 +1,36 @@
+name: Build and Publish
+on:
+  # This schedules this yaml file to run nightly at 00:00am UTC
+  schedule:
+    - cron: 0 0 * * *
+      
+jobs:
+  terraform-plan-and-apply:
+    defaults:
+      run:
+        working-directory: ./config
+    runs-on: ubuntu-latest
+    env:
+      KEYCLOAK_CLIENT_ID: ${{ secrets.tf_kc_client_id }}
+      KEYCLOAK_CLIENT_SECRET: ${{ secrets.tf_kc_client_secret }}
+      KEYCLOAK_REALM: ${{ secrets.tf_kc_realm }}
+      KEYCLOAK_URL: ${{ secrets.tf_kc_url }}
+      TF_VAR_callisto_realm: ${{ secrets.tf_kc_realm }}
+      TF_VAR_callisto_url: ${{ secrets.tf_callisto_url }}
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        ref: main
+    - uses: hashicorp/setup-terraform@v2
+
+    - name: Terraform Init
+      id: init
+      run: terraform init -reconfigure -backend-config="region=${{ secrets.tf_be_region }}" -backend-config="access_key=${{ secrets.tf_be_access_key }}" -backend-config="secret_key=${{ secrets.tf_be_secret_key }}" -backend-config="bucket=${{ secrets.tf_be_bucket }}" -backend-config="key=${{ secrets.tf_be_bucket_key }}"
+
+    - name: Terraform Validate
+      id: validate
+      run: terraform validate
+
+    - name: Terraform Plan
+      id: plan
+      run: terraform plan -detailed-exitcode
