@@ -24,3 +24,12 @@ resource "keycloak_openid_client" "react_client" {
     "https://web.dev.callisto.homeoffice.gov.uk",
   ]
 }
+
+resource "keycloak_openid_user_property_protocol_mapper" "user_property_mapper" {
+  realm_id  = keycloak_realm.callisto.id
+  client_id = keycloak_openid_client.react_client.id
+  name      = "personId"
+
+  user_property = "id"
+  claim_name    = "personId"
+}
