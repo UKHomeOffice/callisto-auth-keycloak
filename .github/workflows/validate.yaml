@@ -28,3 +28,7 @@ jobs:
     - name: Terraform Format
       id: fmt
       run: terraform fmt -check -recursive -diff
+
+    - name: Terraform Plan
+      id: plan
+      run: terraform plan
