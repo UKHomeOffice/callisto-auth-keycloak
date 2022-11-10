@@ -21,6 +21,5 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Wait for Keycloak
-      shell: 'script -q -e -c "bash {0}"'
-      run: ./wait_for_keycloak.sh keycloak
-      
+      run: docker logs -f keycloak 2> /dev/null | grep -m 1 "Admin console listening on"
+      timeout-minutes: 1
