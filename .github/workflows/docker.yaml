@@ -18,7 +18,7 @@ jobs:
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: admin
       TF_VAR_callisto_realm: callisto
-      TF_VAR_callisto_url: http://localhost
+      TF_VAR_callisto_url: http://web.callisto.localhost
 
     services:
       keycloak:
@@ -62,3 +62,11 @@ jobs:
         KEYCLOAK_URL: http://localhost:${{ job.services.keycloak.ports[8080] }}
       run: terraform plan -input=false -out=tfplan
 
+    - name: Terraform Apply
+      id: apply
+      env:
+        KEYCLOAK_URL: http://localhost:${{ job.services.keycloak.ports[8080] }}
+      run: terraform apply -input=false -auto-approve -input=false tfplan
+
+    - name: Docker commit
+      run: docker commit keycloak callisto/keycloak:latest
