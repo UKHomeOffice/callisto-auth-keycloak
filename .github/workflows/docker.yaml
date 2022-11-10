@@ -21,4 +21,4 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Wait for Keycloak
-      run: ./wait_for_keycloak.sh keycloak
+      run: timeout --foreground 120s ./wait_for_keycloak.sh keycloak
