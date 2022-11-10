@@ -14,14 +14,20 @@ jobs:
       AWS_ACCESS_KEY_ID: test
       AWS_SECRET_ACCESS_KEY: test
       AWS_DEFAULT_REGION: eu-west-2
+      KEYCLOAK_CLIENT_ID: admin-cli
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+      KEYCLOAK_URL: http://localhost:${{ job.services.keycloak.ports[8080] }}
+      TF_VAR_callisto_realm: callisto
+      TF_VAR_callisto_url: http://localhost
 
     services:
       keycloak:
         image: quay.io/keycloak/keycloak:15.0.2
         options: --name keycloak
-        env:
-          KEYCLOAK_USER: admin
-          KEYCLOAK_PASSWORD: admin
+        # env:
+        #   KEYCLOAK_USER: admin
+        #   KEYCLOAK_PASSWORD: admin
         ports:
         - 8080
       localstack:
