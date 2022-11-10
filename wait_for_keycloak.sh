@@ -1,5 +1,6 @@
 #!/bin/sh
 docker logs -f $1 2> /dev/null | grep -m 1 "Admin console listening on"
+kill -s INT $$
 # set -m
 # (sleep 120 && kill -s INT $$ && exit 1) &
 # mysleep=$!
