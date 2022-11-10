@@ -23,7 +23,7 @@ jobs:
         ports:
         - 4566
         env:
-          - SERVICES=s3
+        - SERVICES=s3
 
     steps:
     - uses: actions/checkout@v1
