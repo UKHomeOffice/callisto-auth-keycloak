@@ -11,3 +11,5 @@ sleep 10 && docker logs -f $1 2> /dev/null | grep -m 1 "Admin console listening 
 loggrep=$!
 (sleep 60 && echo Timed out waiting for Keycloak && kill -9 $loggrep) &
 wait $loggrep
+kill $(jobs -p)
+exit 0
