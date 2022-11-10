@@ -9,11 +9,11 @@ jobs:
     defaults:
       run:
         working-directory: ./config
-      env:
-        AWS_ACCESS_KEY_ID: test
-        AWS_SECRET_ACCESS_KEY: test
-        AWS_DEFAULT_REGION: eu-west-2
     runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      AWS_DEFAULT_REGION: eu-west-2
 
     services:
       keycloak:
