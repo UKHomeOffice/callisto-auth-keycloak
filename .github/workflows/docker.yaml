@@ -15,7 +15,7 @@ jobs:
           KEYCLOAK_USER: admin
           KEYCLOAK_PASSWORD: admin
         ports:
-        - 8080:tcp
+        - 8080
 
     steps:
     - uses: actions/checkout@v1
