@@ -59,7 +59,7 @@ jobs:
     - name: Terraform Plan
       id: plan
       env:
-        TF_LOG:trace
+        TF_LOG: trace
         KEYCLOAK_URL: http://localhost:${{ job.services.keycloak.ports[8080] }}
       run: terraform plan -input=false -out=tfplan
 
