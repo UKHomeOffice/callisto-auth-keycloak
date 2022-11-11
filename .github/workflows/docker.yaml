@@ -1,8 +1,9 @@
 name: Docker
 on:
   push:
-    branches_ignore:
+    branches:
       - main
+      - **EAHW-**
 
 jobs:
   build-docker-image:
@@ -72,8 +73,14 @@ jobs:
 
     - name: Docker commit
       run: |
-        docker commit keycloak ${DOCKER_REPO}:${GITHUB_REF_NAME}
-        docker image tag  ${DOCKER_REPO}:${GITHUB_REF_NAME} ${ECR_REGISTRY}/${DOCKER_REPO}:${GITHUB_REF_NAME}
+        docker commit keycloak ${DOCKER_REPO}:${GITHUB_SHA}
+        if [ "$GITHUB_REF_NAME" = "main" ]
+        then
+          docker image tag  ${DOCKER_REPO}:${GITHUB_SHA} ${ECR_REGISTRY}/${DOCKER_REPO}:latest
+        else
+          [[ $GITHUB_REF_NAME =~ (EAHW-[0-9]*) ]] && TAG=${match/#E/E}${BASH_REMATCH/#E/E}
+          docker image tag  ${DOCKER_REPO}:${GITHUB_SHA} ${ECR_REGISTRY}/${DOCKER_REPO}:${TAG}
+        fi
         docker image ls
 
     - name: Configure AWS credentials
@@ -89,4 +96,4 @@ jobs:
 
     - name: Push image to Amazon ECR
       run: |
-        docker push ${ECR_REGISTRY}/${DOCKER_REPO}:${GITHUB_REF_NAME}
+        docker image push --all-tags ${ECR_REGISTRY}/${DOCKER_REPO}
