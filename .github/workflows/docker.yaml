@@ -19,6 +19,8 @@ jobs:
       KEYCLOAK_PASSWORD: admin
       TF_VAR_callisto_realm: callisto
       TF_VAR_callisto_url: http://web.callisto.localhost
+      ECR_REGISTRY: 340268328991.dkr.ecr.eu-west-2.amazonaws.com 
+      DOCKER_REPO: callisto/auth-keycloak
 
     services:
       keycloak:
@@ -69,4 +71,22 @@ jobs:
       run: terraform apply -input=false -auto-approve -input=false tfplan
 
     - name: Docker commit
-      run: docker commit keycloak callisto/keycloak:latest
+      run: |
+        docker commit keycloak ${DOCKER_REPO}:${GITHUB_REF_NAME}
+        docker image tag  ${DOCKER_REPO}:${GITHUB_REF_NAME} ${ECR_REGISTRY}/${DOCKER_REPO}:${GITHUB_REF_NAME}
+        docker image ls
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.CALLISTO_AUTH_KEYCLOAK_DEPLOY_BOT_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.CALLISTO_AUTH_KEYCLOAK_DEPLOY_BOT_SECRET_ACCESS_KEY }}
+        aws-region: eu-west-2
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Push image to Amazon ECR
+      run: |
+        docker push ${ECR_REGISTRY}/${DOCKER_REPO}:${GITHUB_REF_NAME}
