@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - main
-      - **EAHW-**
+      - '**EAHW-**'
 
 jobs:
   build-docker-image:
