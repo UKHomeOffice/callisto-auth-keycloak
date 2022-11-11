@@ -82,6 +82,7 @@ jobs:
           docker image tag  ${DOCKER_REPO}:${GITHUB_SHA} ${ECR_REGISTRY}/${DOCKER_REPO}:${TAG}
         fi
         docker image ls
+      shell: bash
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
