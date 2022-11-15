@@ -45,9 +45,6 @@ jobs:
     - name: Wait for Keycloak
       run: (docker logs -f keycloak &) | grep -m 1 "Admin console listening on"
       timeout-minutes: 1
-    # - name: Wait for localstack
-    #   run: (docker logs -f localstack &) | grep -m 1 "^Ready."
-    #   timeout-minutes: 2
 
     - name: Upload to S3
       run: |
