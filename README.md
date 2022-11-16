@@ -46,7 +46,8 @@ Steps:
    KEYCLOAK_CLIENT_SECRET=[redacted - grab from the keycloak realm management UI] \
    KEYCLOAK_REALM=callisto-dev \
    KEYCLOAK_URL="https://sso-dev.notprod.homeoffice.gov.uk" \
-   TF_VAR_callisto_realm=callisto-dev    TF_VAR_callisto_url=https://web.dev.callisto-notprod.homeoffice.gov.uk \
+   TF_VAR_callisto_realm=callisto-dev \
+   TF_VAR_callisto_url=https://web.dev.callisto-notprod.homeoffice.gov.uk \
    terraform apply
    ```
 
