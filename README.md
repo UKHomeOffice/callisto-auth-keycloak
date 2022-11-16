@@ -14,27 +14,39 @@ We currently have 3 GitHub workflows.
 
 We’ve developed a habit of testing our changes in dev before raising them as a PR.
 
-You will need:
+**You will need:**
 
-- `brew install terraform`
+- Tools:
+  - The terraform CLI (install with brew)
+  - The AWS CLI
 - access to our k8s secrets to see the `ho-callisto-terraform-s3` secrets for configuring the back-end
-- The AWS cli
+- ‘ream-management’ client roles in keycloak for the callisto-dev realm (a colleague should be able to set you up here)
 
 Steps:
 
 1. `cd config`
 
 1. `terraform init`
-   …
 
-2. See what you’re changing with `terraform plan`:
+1. See what you’re changing with `terraform plan`:
 
-```
-KEYCLOAK_CLIENT_ID=terraform-client \
-KEYCLOAK_CLIENT_SECRET=[redacted] \
-KEYCLOAK_REALM=callisto-dev \
-KEYCLOAK_URL="https://sso-dev.notprod.homeoffice.gov.uk" \
-TF_VAR_callisto_realm=callisto-dev \
-TF_VAR_callisto_url=https://web.dev.callisto.homeoffice.gov.uk \
-terraform plan
-```
+   ```
+   KEYCLOAK_CLIENT_ID=terraform-client \
+   KEYCLOAK_CLIENT_SECRET=[redacted - grab from the keycloak realm management UI] \
+   KEYCLOAK_REALM=callisto-dev \
+   KEYCLOAK_URL="https://sso-dev.notprod.homeoffice.gov.uk" \
+   TF_VAR_callisto_realm=callisto-dev \
+   TF_VAR_callisto_url=https://web.dev.callisto.homeoffice.gov.uk \
+   terraform plan
+   ```
+
+1. Apply!:
+   ```
+   KEYCLOAK_CLIENT_ID=terraform-client \
+   KEYCLOAK_CLIENT_SECRET=[redacted - grab from the keycloak realm management UI] \
+   KEYCLOAK_REALM=callisto-dev \
+   KEYCLOAK_URL="https://sso-dev.notprod.homeoffice.gov.uk" \
+   TF_VAR_callisto_realm=callisto-dev \
+   TF_VAR_callisto_url=https://web.dev.callisto.homeoffice.gov.uk \
+   terraform apply
+   ```
