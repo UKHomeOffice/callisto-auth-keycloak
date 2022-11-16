@@ -16,12 +16,10 @@ resource "keycloak_openid_client" "react_client" {
   service_accounts_enabled                 = false
 
   valid_redirect_uris = [
-    "https://web.dev.callisto.homeoffice.gov.uk/*",
-    "https://web.dev.callisto-notprod.homeoffice.gov.uk/*",
+    "${var.callisto_url}/*"
   ]
   web_origins = [
-    "https://web.dev.callisto.homeoffice.gov.uk",
-    "https://web.dev.callisto-notprod.homeoffice.gov.uk",
+    var.callisto_url
   ]
 }
 

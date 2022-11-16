@@ -26,7 +26,7 @@ resource "keycloak_realm" "callisto" {
   security_defenses {
     headers {
       x_frame_options                     = "SAMEORIGIN"
-      content_security_policy             = "frame-src 'self'; frame-ancestors 'self' https://web.dev.callisto.homeoffice.gov.uk/ https://web.dev.callisto-notprod.homeoffice.gov.uk/; object-src 'none';"
+      content_security_policy             = "frame-src 'self'; frame-ancestors 'self' ${var.callisto_url}; object-src 'none';"
       content_security_policy_report_only = ""
       x_content_type_options              = "nosniff"
       x_robots_tag                        = "none"
