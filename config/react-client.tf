@@ -19,9 +19,11 @@ resource "keycloak_openid_client" "react_client" {
   root_url  = "https://web.dev.callisto.homeoffice.gov.uk/"
   valid_redirect_uris = [
     "https://web.dev.callisto.homeoffice.gov.uk/*",
+    "https://web.dev.callisto-notprod.homeoffice.gov.uk/*",
   ]
   web_origins = [
     "https://web.dev.callisto.homeoffice.gov.uk",
+    "https://web.dev.callisto-notprod.homeoffice.gov.uk",
   ]
 }
 
