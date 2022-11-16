@@ -50,3 +50,7 @@ Steps:
    TF_VAR_callisto_url=https://web.dev.callisto.homeoffice.gov.uk \
    terraform apply
    ```
+
+### Troubleshooting
+
+Your terraform plan might want to recreate a load of `data.keycloak_openid_client.realm_management` stuff. We’re still trying to figure out exactly why this is. In the meantime, our workaround is to target specific resources to create, e.g. `… terraform plan -target=keycloak_openid_client.react_client`
