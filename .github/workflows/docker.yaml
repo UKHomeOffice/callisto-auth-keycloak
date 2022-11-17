@@ -1,0 +1,96 @@
+name: Docker
+on:
+  push:
+    branches:
+      - main
+      - '**EAHW-**'
+
+jobs:
+  build-docker-image:
+    defaults:
+      run:
+        working-directory: ./config
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      AWS_DEFAULT_REGION: eu-west-2
+      KEYCLOAK_CLIENT_ID: admin-cli
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+      TF_VAR_callisto_realm: callisto
+      TF_VAR_callisto_url: http://web.callisto.localhost
+      ECR_REGISTRY: 340268328991.dkr.ecr.eu-west-2.amazonaws.com 
+      DOCKER_REPO: callisto/auth-keycloak
+
+    services:
+      keycloak:
+        image: quay.io/keycloak/keycloak:15.0.2
+        options: --name keycloak
+        env:
+          KEYCLOAK_USER: admin
+          KEYCLOAK_PASSWORD: admin
+        ports:
+        - 8080
+      localstack:
+        image: localstack/localstack
+        options: --name localstack
+        ports:
+        - 4566
+        env:
+          SERVICES: s3
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Wait for Keycloak
+      run: (docker logs -f keycloak &) | grep -m 1 "Admin console listening on"
+      timeout-minutes: 1
+
+    - name: Upload to S3
+      run: |
+        aws s3api create-bucket --bucket terraform --endpoint-url http://localhost:${{ job.services.localstack.ports[4566] }} --create-bucket-configuration LocationConstraint=eu-west-2
+
+    - uses: hashicorp/setup-terraform@v2
+
+    - name: Terraform Init
+      id: init
+      run: terraform init -reconfigure -backend-config="endpoint=http://localhost:${{ job.services.localstack.ports[4566] }}" -backend-config="region=eu-west-2" -backend-config="skip_credentials_validation=true" -backend-config="skip_metadata_api_check=true" -backend-config="bucket=terraform" -backend-config="key=terraform.tfstate" -backend-config="force_path_style=true"
+
+    - name: Terraform Plan
+      id: plan
+      env:
+        KEYCLOAK_URL: http://localhost:${{ job.services.keycloak.ports[8080] }}
+      run: terraform plan -input=false -out=tfplan
+
+    - name: Terraform Apply
+      id: apply
+      env:
+        KEYCLOAK_URL: http://localhost:${{ job.services.keycloak.ports[8080] }}
+      run: terraform apply -input=false -auto-approve -input=false tfplan
+
+    - name: Docker commit
+      run: |
+        docker commit keycloak ${DOCKER_REPO}:${GITHUB_SHA}
+        if [ "$GITHUB_REF_NAME" = "main" ]
+        then
+          docker image tag  ${DOCKER_REPO}:${GITHUB_SHA} ${ECR_REGISTRY}/${DOCKER_REPO}:latest
+        else
+          [[ $GITHUB_REF_NAME =~ (EAHW-[0-9]*) ]] && TAG=${match/#E/E}${BASH_REMATCH/#E/E}
+          docker image tag  ${DOCKER_REPO}:${GITHUB_SHA} ${ECR_REGISTRY}/${DOCKER_REPO}:${TAG}
+        fi
+      shell: bash
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.CALLISTO_AUTH_KEYCLOAK_DEPLOY_BOT_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.CALLISTO_AUTH_KEYCLOAK_DEPLOY_BOT_SECRET_ACCESS_KEY }}
+        aws-region: eu-west-2
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Push image to Amazon ECR
+      run: |
+        docker image push --all-tags ${ECR_REGISTRY}/${DOCKER_REPO}
