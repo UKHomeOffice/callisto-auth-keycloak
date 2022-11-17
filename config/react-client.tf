@@ -15,8 +15,6 @@ resource "keycloak_openid_client" "react_client" {
   direct_access_grants_enabled             = true
   service_accounts_enabled                 = false
 
-  admin_url = var.callisto_url
-  root_url  = var.callisto_url
   valid_redirect_uris = [
     "${var.callisto_url}/*",
   ]
