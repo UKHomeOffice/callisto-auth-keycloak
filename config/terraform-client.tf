@@ -40,6 +40,9 @@ data "keycloak_role" "required" {
 }
 
 resource "keycloak_openid_client_service_account_role" "client2_service_account_role" {
+  lifecycle {
+    prevent_destroy = true
+  }
   for_each                = data.keycloak_role.required
   realm_id                = keycloak_realm.callisto.id
   service_account_user_id = keycloak_openid_client.terraform_openid_client_callisto.service_account_user_id
