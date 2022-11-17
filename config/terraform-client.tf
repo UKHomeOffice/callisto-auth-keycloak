@@ -21,7 +21,7 @@ resource "keycloak_openid_client" "terraform_openid_client_callisto" {
 }
 
 data "keycloak_openid_client" "realm_management" {
-  realm_id  = keycloak_realm.callisto.id
+  realm_id  = var.callisto_realm
   client_id = "realm-management"
 }
 
@@ -44,7 +44,7 @@ resource "keycloak_openid_client_service_account_role" "client2_service_account_
     prevent_destroy = true
   }
   for_each                = data.keycloak_role.required
-  realm_id                = keycloak_realm.callisto.id
+  realm_id                = data.keycloak_openid_client.realm_management.realm_id
   service_account_user_id = keycloak_openid_client.terraform_openid_client_callisto.service_account_user_id
   client_id               = data.keycloak_openid_client.realm_management.id
   role                    = each.value.name
