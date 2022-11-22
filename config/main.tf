@@ -40,3 +40,13 @@ resource "keycloak_realm" "callisto" {
     signature_algorithms      = ["ES256"]
   }
 }
+
+module "test_users" {
+  source         = "./modules/terraform/test_users"
+  count          = var.include_test_users ? 1 : 0
+  callisto_realm = var.callisto_realm
+
+  depends_on = [
+    keycloak_realm.callisto
+  ]
+}

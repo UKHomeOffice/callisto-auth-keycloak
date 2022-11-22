@@ -20,6 +20,7 @@ jobs:
       KEYCLOAK_PASSWORD: admin
       TF_VAR_callisto_realm: callisto
       TF_VAR_callisto_url: https://web.callisto.localhost
+      TF_VAR_include_test_users: true
       ECR_REGISTRY: 340268328991.dkr.ecr.eu-west-2.amazonaws.com 
       DOCKER_REPO: callisto/auth-keycloak
 
