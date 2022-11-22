@@ -70,6 +70,7 @@ jobs:
 
     - name: Docker commit
       run: |
+        docker stop keycloak
         docker commit keycloak ${DOCKER_REPO}:${GITHUB_SHA}
         if [ "$GITHUB_REF_NAME" = "main" ]
         then
