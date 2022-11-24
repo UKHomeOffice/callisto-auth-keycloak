@@ -12,3 +12,18 @@ resource "keycloak_user" "tester" {
     temporary = false
   }
 }
+
+resource "keycloak_user" "callistouser" {
+  realm_id = var.callisto_realm
+  username = "callistouser"
+  enabled  = true
+
+  email      = "callistouser@homeoffice.gov.uk"
+  first_name = "Callisto"
+  last_name  = "User"
+
+  initial_password {
+    value     = "password123"
+    temporary = false
+  }
+}
