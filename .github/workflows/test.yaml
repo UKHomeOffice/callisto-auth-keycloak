@@ -1,4 +1,4 @@
-name: Build and Publish Dev
+name: Build and Publish Test
 on:
   push:
     branches:
@@ -11,12 +11,12 @@ jobs:
         working-directory: ./config
     runs-on: ubuntu-latest
     env:
-      KEYCLOAK_CLIENT_ID: ${{ secrets.tf_kc_client_id }}
-      KEYCLOAK_CLIENT_SECRET: ${{ secrets.tf_kc_client_secret }}
-      KEYCLOAK_REALM: ${{ secrets.tf_kc_realm }}
-      KEYCLOAK_URL: ${{ secrets.tf_kc_url }}
-      TF_VAR_callisto_realm: ${{ secrets.tf_kc_realm }}
-      TF_VAR_callisto_url: ${{ secrets.tf_callisto_url }}
+      KEYCLOAK_CLIENT_ID: ${{ secrets.tf_test_kc_client_id }}
+      KEYCLOAK_CLIENT_SECRET: ${{ secrets.tf_test_kc_client_secret }}
+      KEYCLOAK_REALM: ${{ secrets.tf_test_kc_realm }}
+      KEYCLOAK_URL: ${{ secrets.tf_test_kc_url }}
+      TF_VAR_callisto_realm: ${{ secrets.tf_test_kc_realm }}
+      TF_VAR_callisto_url: ${{ secrets.tf_test_callisto_url }}
     steps:
     - uses: actions/checkout@v2
     - uses: hashicorp/setup-terraform@v2
