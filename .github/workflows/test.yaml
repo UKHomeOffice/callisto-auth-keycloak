@@ -21,6 +21,10 @@ jobs:
     - uses: actions/checkout@v2
     - uses: hashicorp/setup-terraform@v2
 
+    - name: Terraform Workspace
+      id: workspace
+      run: terraform workspace test
+
     - name: Terraform Init
       id: init
       run: terraform init -reconfigure -backend-config="region=${{ secrets.tf_be_region }}" -backend-config="access_key=${{ secrets.tf_be_access_key }}" -backend-config="secret_key=${{ secrets.tf_be_secret_key }}" -backend-config="bucket=${{ secrets.tf_be_bucket }}" -backend-config="key=${{ secrets.tf_be_bucket_key }}"
@@ -35,4 +39,4 @@ jobs:
 
     - name: Terraform Apply
       id: apply
-      run: terraform apply -input=false -auto-approve -input=false tfplan
+      run: terraform apply -input=false -auto-approvetfplan
