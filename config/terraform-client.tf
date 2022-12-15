@@ -21,8 +21,14 @@ resource "keycloak_openid_client" "terraform_openid_client_callisto" {
 }
 
 data "keycloak_openid_client" "realm_management" {
+  # Depending on the keycloak_realm.callisto resource directly creates an odd behaviour when 
+  # attributes of the realm are changed. Using the realm variable prevents this but breaks
+  # the inherent dependency. Therefore it is established using the depends_on.
   realm_id  = var.callisto_realm
   client_id = "realm-management"
+  depends_on = [
+    keycloak_realm.callisto
+  ]
 }
 
 locals {
