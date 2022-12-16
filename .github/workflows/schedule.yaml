@@ -7,7 +7,7 @@ on:
 
 jobs:
   terraform-plan-and-apply:
-  strategy:
+    strategy:
       matrix:
         stage: ['development', 'test', 'production']
       # When set to true, GitHub cancels all in-progress jobs if any matrix job fails.
