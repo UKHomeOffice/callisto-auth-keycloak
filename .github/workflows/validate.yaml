@@ -9,8 +9,6 @@ on:
 
 jobs:
   terraform-validate:
-    environment:
-      name: 'development'
     defaults:
       run:
         working-directory: ./config
