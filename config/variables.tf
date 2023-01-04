@@ -9,3 +9,9 @@ variable "callisto_url" {
   description = "The website url for callisto"
   sensitive   = true
 }
+
+variable "include_test_users" {
+  type        = bool
+  description = "Whether to include test users or not"
+  default     = false
+}

@@ -1,0 +1,25 @@
+version: '2.4'
+
+services:
+  keycloak:
+    image: jboss/keycloak:15.0.2
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:9090/auth']
+      start_period: 60s
+    environment:
+      - DB_VENDOR=h2
+      - PROXY_ADDRESS_FORWARDING=true
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=admin
+    command:
+      - "-Djboss.http.port=9090"
+    ports:
+      - "50000:9090"
+    networks:
+      - callisto
+
+networks:
+  callisto:
+    name: callisto-localdev_callisto
+    driver: bridge
+    external: true
