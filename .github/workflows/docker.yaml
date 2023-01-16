@@ -102,6 +102,17 @@ jobs:
         docker commit keycloak-arm ${DOCKER_REPO}:${GITHUB_SHA}-arm
       shell: bash
 
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.CALLISTO_AUTH_KEYCLOAK_DEPLOY_BOT_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.CALLISTO_AUTH_KEYCLOAK_DEPLOY_BOT_SECRET_ACCESS_KEY }}
+        aws-region: eu-west-2
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
     - name: Tag AMD and ARM images for ECR Registry and create multi-arch manifest
       run: |
         if [ "$GITHUB_REF_NAME" = "main" ]
@@ -116,17 +127,6 @@ jobs:
         docker tag ${DOCKER_REPO}:${GITHUB_SHA}-amd ${ECR_REGISTRY}/${DOCKER_REPO}:${GITHUB_SHA}-amd
         docker tag ${DOCKER_REPO}:${GITHUB_SHA}-arm ${ECR_REGISTRY}/${DOCKER_REPO}:${GITHUB_SHA}-arm
         docker manifest create ${ECR_REGISTRY}/${DOCKER_REPO}:${TAG} --amend ${ECR_REGISTRY}/${DOCKER_REPO}:${GITHUB_SHA}-amd --amend ${ECR_REGISTRY}/${DOCKER_REPO}:${GITHUB_SHA}-arm
-
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.CALLISTO_AUTH_KEYCLOAK_DEPLOY_BOT_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.CALLISTO_AUTH_KEYCLOAK_DEPLOY_BOT_SECRET_ACCESS_KEY }}
-        aws-region: eu-west-2
-
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
 
     - name: Push manifest and related images to Amazon ECR
       run: |
