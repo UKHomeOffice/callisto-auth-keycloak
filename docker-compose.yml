@@ -2,7 +2,7 @@ version: '2.4'
 
 services:
   keycloak:
-    image: tmohdit/keycloak:15.0.2
+    image: tmohdit/keycloak:15.1.1
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:9090/auth']
       start_period: 60s

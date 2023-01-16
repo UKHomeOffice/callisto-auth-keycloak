@@ -26,7 +26,7 @@ jobs:
 
     services:
       keycloak-amd:
-        image: tmohdit/keycloak:15.0.2
+        image: tmohdit/keycloak:15.1.1
         options: --name keycloak-amd
         env:
           KEYCLOAK_USER: admin
@@ -41,7 +41,7 @@ jobs:
         env:
           SERVICES: s3
       keycloak-arm:
-        image: tmohdit/keycloak:15.0.2
+        image: tmohdit/keycloak:15.1.1
         options: --name keycloak-arm --platform=linux/arm64
         env:
           KEYCLOAK_USER: admin
