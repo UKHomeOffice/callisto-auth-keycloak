@@ -108,6 +108,7 @@ jobs:
         then
           TAG=latest
         elif [[ $GITHUB_REF_NAME =~ (EAHW-[0-9]*) ]]
+        then
           TAG=${match/#E/E}${BASH_REMATCH/#E/E}
         else
           TAG=${GITHUB_SHA}
@@ -133,6 +134,7 @@ jobs:
         then
           TAG=latest
         elif [[ $GITHUB_REF_NAME =~ (EAHW-[0-9]*) ]]
+        then
           TAG=${match/#E/E}${BASH_REMATCH/#E/E}
         else
           TAG=${GITHUB_SHA}
