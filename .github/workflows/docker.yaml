@@ -25,9 +25,9 @@ jobs:
       DOCKER_REPO: callisto/auth-keycloak
 
     services:
-      keycloak:
-        image: quay.io/keycloak/keycloak:15.0.2
-        options: --name keycloak
+      keycloak-amd:
+        image: tmohdit/keycloak:15.0.2
+        options: --name keycloak-amd
         env:
           KEYCLOAK_USER: admin
           KEYCLOAK_PASSWORD: admin
@@ -40,47 +40,80 @@ jobs:
         - 4566
         env:
           SERVICES: s3
+      keycloak-arm:
+        image: tmohdit/keycloak:15.0.2
+        options: --name keycloak-arm --platform=linux/arm64
+        env:
+          KEYCLOAK_USER: admin
+          KEYCLOAK_PASSWORD: admin
+        ports:
+        - 8080
 
     steps:
     - uses: actions/checkout@v1
     - name: Wait for Keycloak
-      run: (docker logs -f keycloak &) | grep -m 1 "Admin console listening on"
+      run: (docker logs -f keycloak-amd &) | grep -m 1 "Admin console listening on" && (docker logs -f keycloak-arm &) | grep -m 1 "Admin console listening on"
       timeout-minutes: 1
 
-    - name: Upload to S3
+    - name: Create S3 local bucket
       run: |
         aws s3api create-bucket --bucket terraform --endpoint-url http://localhost:${{ job.services.localstack.ports[4566] }} --create-bucket-configuration LocationConstraint=eu-west-2
 
     - uses: hashicorp/setup-terraform@v2
 
-    - name: Terraform Init
-      id: init
-      run: terraform init -reconfigure -backend-config="endpoint=http://localhost:${{ job.services.localstack.ports[4566] }}" -backend-config="region=eu-west-2" -backend-config="skip_credentials_validation=true" -backend-config="skip_metadata_api_check=true" -backend-config="bucket=terraform" -backend-config="key=terraform.tfstate" -backend-config="force_path_style=true"
+    - name: Terraform Init AMD
+      id: init-amd
+      run: terraform init -reconfigure -backend-config="endpoint=http://localhost:${{ job.services.localstack.ports[4566] }}" -backend-config="region=eu-west-2" -backend-config="skip_credentials_validation=true" -backend-config="skip_metadata_api_check=true" -backend-config="bucket=terraform" -backend-config="key=terraform-amd.tfstate" -backend-config="force_path_style=true"
 
-    - name: Terraform Plan
-      id: plan
+    - name: Terraform Plan AMD
+      id: plan-amd
       env:
-        KEYCLOAK_URL: http://localhost:${{ job.services.keycloak.ports[8080] }}
+        KEYCLOAK_URL: http://localhost:${{ job.services.keycloak-amd.ports[8080] }}
       run: terraform plan -input=false -out=tfplan
 
-    - name: Terraform Apply
-      id: apply
+    - name: Terraform Apply AMD
+      id: apply-amd
       env:
-        KEYCLOAK_URL: http://localhost:${{ job.services.keycloak.ports[8080] }}
+        KEYCLOAK_URL: http://localhost:${{ job.services.keycloak-amd.ports[8080] }}
+      run: terraform apply -input=false -auto-approve -input=false tfplan
+
+    - name: Terraform Init ARM
+      id: init-arm
+      run: terraform init -reconfigure -backend-config="endpoint=http://localhost:${{ job.services.localstack.ports[4566] }}" -backend-config="region=eu-west-2" -backend-config="skip_credentials_validation=true" -backend-config="skip_metadata_api_check=true" -backend-config="bucket=terraform" -backend-config="key=terraform-arm.tfstate" -backend-config="force_path_style=true"
+
+    - name: Terraform Plan ARM
+      id: plan-arm
+      env:
+        KEYCLOAK_URL: http://localhost:${{ job.services.keycloak-arm.ports[8080] }}
+      run: terraform plan -input=false -out=tfplan
+
+    - name: Terraform Apply ARM
+      id: apply-arm
+      env:
+        KEYCLOAK_URL: http://localhost:${{ job.services.keycloak-arm.ports[8080] }}
       run: terraform apply -input=false -auto-approve -input=false tfplan
 
     - name: Docker commit
       run: |
-        docker stop keycloak
-        docker commit keycloak ${DOCKER_REPO}:${GITHUB_SHA}
+        docker stop keycloak-amd
+        docker commit keycloak-amd ${DOCKER_REPO}:${GITHUB_SHA}-amd
+        docker stop keycloak-arm
+        docker commit keycloak-arm ${DOCKER_REPO}:${GITHUB_SHA}-arm
+      shell: bash
+
+    - name: Tag AMD and ARM images for ECR Registry and create multi-arch manifest
+      run: |
         if [ "$GITHUB_REF_NAME" = "main" ]
         then
-          docker image tag  ${DOCKER_REPO}:${GITHUB_SHA} ${ECR_REGISTRY}/${DOCKER_REPO}:latest
+          TAG=latest
+        elif [[ $GITHUB_REF_NAME =~ (EAHW-[0-9]*) ]]
+          TAG=${match/#E/E}${BASH_REMATCH/#E/E}
         else
-          [[ $GITHUB_REF_NAME =~ (EAHW-[0-9]*) ]] && TAG=${match/#E/E}${BASH_REMATCH/#E/E}
-          docker image tag  ${DOCKER_REPO}:${GITHUB_SHA} ${ECR_REGISTRY}/${DOCKER_REPO}:${TAG}
+          TAG=${GITHUB_SHA}
         fi
-      shell: bash
+        docker tag ${DOCKER_REPO}:${GITHUB_SHA}-amd ${ECR_REGISTRY}/${DOCKER_REPO}:${GITHUB_SHA}-amd
+        docker tag ${DOCKER_REPO}:${GITHUB_SHA}-arm ${ECR_REGISTRY}/${DOCKER_REPO}:${GITHUB_SHA}-arm
+        docker manifest create ${ECR_REGISTRY}/${DOCKER_REPO}:${TAG} --amend ${ECR_REGISTRY}/${DOCKER_REPO}:${GITHUB_SHA}-amd --amend ${ECR_REGISTRY}/${DOCKER_REPO}:${GITHUB_SHA}-arm
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -93,6 +126,15 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Push image to Amazon ECR
+    - name: Push manifest and related images to Amazon ECR
       run: |
+        if [ "$GITHUB_REF_NAME" = "main" ]
+        then
+          TAG=latest
+        elif [[ $GITHUB_REF_NAME =~ (EAHW-[0-9]*) ]]
+          TAG=${match/#E/E}${BASH_REMATCH/#E/E}
+        else
+          TAG=${GITHUB_SHA}
+        fi
         docker image push --all-tags ${ECR_REGISTRY}/${DOCKER_REPO}
+        docker manifest push ${ECR_REGISTRY}/${DOCKER_REPO}:${TAG}
