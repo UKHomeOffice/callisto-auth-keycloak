@@ -47,8 +47,8 @@ jobs:
       #     KEYCLOAK_USER: admin
       #     KEYCLOAK_PASSWORD: admin
       #     DOCKER_DEFAULT_PLATFORM: linux/arm64
-        ports:
-        - 8080
+      #   ports:
+      #   - 8080
 
     steps:
     - uses: actions/checkout@v1
