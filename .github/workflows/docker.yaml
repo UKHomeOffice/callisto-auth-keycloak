@@ -40,13 +40,13 @@ jobs:
         - 4566
         env:
           SERVICES: s3
-      keycloak-arm:
-        image: tmohdit/keycloak:15.1.1
-        options: --name keycloak-arm
-        env:
-          KEYCLOAK_USER: admin
-          KEYCLOAK_PASSWORD: admin
-          DOCKER_DEFAULT_PLATFORM: linux/arm64
+      # keycloak-arm:
+      #   image: tmohdit/keycloak:15.1.1
+      #   options: --name keycloak-arm
+      #   env:
+      #     KEYCLOAK_USER: admin
+      #     KEYCLOAK_PASSWORD: admin
+      #     DOCKER_DEFAULT_PLATFORM: linux/arm64
         ports:
         - 8080
 
@@ -78,26 +78,27 @@ jobs:
         KEYCLOAK_URL: http://localhost:${{ job.services.keycloak-amd.ports[8080] }}
       run: terraform apply -input=false -auto-approve -input=false tfplan
 
-    - name: Terraform Init ARM
-      id: init-arm
-      run: terraform init -reconfigure -backend-config="endpoint=http://localhost:${{ job.services.localstack.ports[4566] }}" -backend-config="region=eu-west-2" -backend-config="skip_credentials_validation=true" -backend-config="skip_metadata_api_check=true" -backend-config="bucket=terraform" -backend-config="key=terraform-arm.tfstate" -backend-config="force_path_style=true"
+    # - name: Terraform Init ARM
+    #   id: init-arm
+    #   run: terraform init -reconfigure -backend-config="endpoint=http://localhost:${{ job.services.localstack.ports[4566] }}" -backend-config="region=eu-west-2" -backend-config="skip_credentials_validation=true" -backend-config="skip_metadata_api_check=true" -backend-config="bucket=terraform" -backend-config="key=terraform-arm.tfstate" -backend-config="force_path_style=true"
 
-    - name: Terraform Plan ARM
-      id: plan-arm
-      env:
-        KEYCLOAK_URL: http://localhost:${{ job.services.keycloak-arm.ports[8080] }}
-      run: terraform plan -input=false -out=tfplan
+    # - name: Terraform Plan ARM
+    #   id: plan-arm
+    #   env:
+    #     KEYCLOAK_URL: http://localhost:${{ job.services.keycloak-arm.ports[8080] }}
+    #   run: terraform plan -input=false -out=tfplan
 
-    - name: Terraform Apply ARM
-      id: apply-arm
-      env:
-        KEYCLOAK_URL: http://localhost:${{ job.services.keycloak-arm.ports[8080] }}
-      run: terraform apply -input=false -auto-approve -input=false tfplan
+    # - name: Terraform Apply ARM
+    #   id: apply-arm
+    #   env:
+    #     KEYCLOAK_URL: http://localhost:${{ job.services.keycloak-arm.ports[8080] }}
+    #   run: terraform apply -input=false -auto-approve -input=false tfplan
 
     - name: Docker commit
       run: |
         docker stop keycloak-amd
         docker commit keycloak-amd ${DOCKER_REPO}:${GITHUB_SHA}-amd
+        docker diff keycloak-amd
         docker stop keycloak-arm
         docker commit keycloak-arm ${DOCKER_REPO}:${GITHUB_SHA}-arm
       shell: bash
