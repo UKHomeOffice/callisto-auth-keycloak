@@ -53,7 +53,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Wait for Keycloak
-      run: (docker logs -f keycloak-amd &) | grep -m 1 "Admin console listening on" && (docker logs -f keycloak-arm &) | grep -m 1 "Admin console listening on"
+      run: (docker logs -f keycloak-amd &) | grep -m 1 "Admin console listening on" # && (docker logs -f keycloak-arm &) | grep -m 1 "Admin console listening on"
       timeout-minutes: 1
 
     - name: Create S3 local bucket
