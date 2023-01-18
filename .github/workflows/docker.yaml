@@ -27,12 +27,7 @@ jobs:
     services:
       keycloak-amd:
         image: tmohdit/keycloak:15.1.1
-        options: >-
-          --name keycloak-amd
-          --health-cmd "curl -f http://localhost:9090/auth"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 6
+        options: --name keycloak-amd
         env:
           KEYCLOAK_USER: admin
           KEYCLOAK_PASSWORD: admin
@@ -48,6 +43,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
+
+    - name: Wait for Keycloak
+      run: (docker logs -f keycloak-amd &) | grep -m 1 "Admin console listening on"
+      timeout-minutes: 1
 
     - name: Create S3 local bucket
       run: |
