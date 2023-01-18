@@ -107,7 +107,7 @@ jobs:
           registry: ''
           context: .
           push: false
-          tags: ${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
+          tags: ${{ env.DOCKER_REPO }}:${{ github.sha }}-arm
           build-args: |
             image=${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
 
@@ -134,7 +134,7 @@ jobs:
           TAG=${GITHUB_SHA}
         fi
         docker tag ${DOCKER_REPO}:${GITHUB_SHA}-amd ${ECR_REGISTRY}/${DOCKER_REPO}:${GITHUB_SHA}-amd
-        docker tag docker.io/${DOCKER_REPO}:${GITHUB_SHA}-arm ${ECR_REGISTRY}/${DOCKER_REPO}:${GITHUB_SHA}-arm
+        docker tag ${DOCKER_REPO}:${GITHUB_SHA}-arm ${ECR_REGISTRY}/${DOCKER_REPO}:${GITHUB_SHA}-arm
         docker manifest create ${ECR_REGISTRY}/${DOCKER_REPO}:${TAG} --amend ${ECR_REGISTRY}/${DOCKER_REPO}:${GITHUB_SHA}-amd --amend ${ECR_REGISTRY}/${DOCKER_REPO}:${GITHUB_SHA}-arm
 
     - name: Push manifest and related images to Amazon ECR
