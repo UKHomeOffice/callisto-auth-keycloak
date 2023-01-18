@@ -101,10 +101,11 @@ jobs:
         # docker build --build-arg "image=${{ env.DOCKER_REPO }}:${{ github.sha }}-amd" -t ${{ env.DOCKER_REPO }}:${{ github.sha }}-amd .
       shell: bash
 
-    - name: Build AMD image
+    - name: Build ARM image
       uses: docker/build-push-action@v3
       with:
           registry: ''
+          platforms: linux/arm64
           context: .
           push: false
           tags: ${{ env.DOCKER_REPO }}:${{ github.sha }}-arm
