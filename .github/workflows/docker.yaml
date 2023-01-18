@@ -108,7 +108,7 @@ jobs:
           push: false
           tags: ${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
           build-args: |
-            image=${{ env.DOCKER_REPO}:${{ github.sha }}-amd
+            image=${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
