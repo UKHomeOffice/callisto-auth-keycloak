@@ -27,7 +27,12 @@ jobs:
     services:
       keycloak-amd:
         image: tmohdit/keycloak:15.1.1
-        options: --name keycloak-amd
+        options: >-
+          --name keycloak-amd
+          --health-cmd "curl -f http://localhost:${{ job.services.keycloak-amd.ports[8080] }}/auth"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 6
         env:
           KEYCLOAK_USER: admin
           KEYCLOAK_PASSWORD: admin
@@ -40,21 +45,9 @@ jobs:
         - 4566
         env:
           SERVICES: s3
-      # keycloak-arm:
-      #   image: tmohdit/keycloak:15.1.1
-      #   options: --name keycloak-arm
-      #   env:
-      #     KEYCLOAK_USER: admin
-      #     KEYCLOAK_PASSWORD: admin
-      #     DOCKER_DEFAULT_PLATFORM: linux/arm64
-      #   ports:
-      #   - 8080
 
     steps:
     - uses: actions/checkout@v1
-    - name: Wait for Keycloak
-      run: (docker logs -f keycloak-amd &) | grep -m 1 "Admin console listening on" # && (docker logs -f keycloak-arm &) | grep -m 1 "Admin console listening on"
-      timeout-minutes: 1
 
     - name: Create S3 local bucket
       run: |
@@ -77,22 +70,6 @@ jobs:
       env:
         KEYCLOAK_URL: http://localhost:${{ job.services.keycloak-amd.ports[8080] }}
       run: terraform apply -input=false -auto-approve -input=false tfplan
-
-    # - name: Terraform Init ARM
-    #   id: init-arm
-    #   run: terraform init -reconfigure -backend-config="endpoint=http://localhost:${{ job.services.localstack.ports[4566] }}" -backend-config="region=eu-west-2" -backend-config="skip_credentials_validation=true" -backend-config="skip_metadata_api_check=true" -backend-config="bucket=terraform" -backend-config="key=terraform-arm.tfstate" -backend-config="force_path_style=true"
-
-    # - name: Terraform Plan ARM
-    #   id: plan-arm
-    #   env:
-    #     KEYCLOAK_URL: http://localhost:${{ job.services.keycloak-arm.ports[8080] }}
-    #   run: terraform plan -input=false -out=tfplan
-
-    # - name: Terraform Apply ARM
-    #   id: apply-arm
-    #   env:
-    #     KEYCLOAK_URL: http://localhost:${{ job.services.keycloak-arm.ports[8080] }}
-    #   run: terraform apply -input=false -auto-approve -input=false tfplan
 
     - name: Docker commit
       run: |
@@ -123,7 +100,7 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Tag AMD and ARM images for ECR Registry and create multi-arch manifest
+    - name: Push multi-arch images and manifest to ECR Registry
       run: |
         if [ "$GITHUB_REF_NAME" = "main" ]
         then
@@ -139,17 +116,3 @@ jobs:
         docker image push --all-tags ${ECR_REGISTRY}/${DOCKER_REPO}
         docker manifest create ${ECR_REGISTRY}/${DOCKER_REPO}:${TAG} --amend ${ECR_REGISTRY}/${DOCKER_REPO}:${GITHUB_SHA}-amd --amend ${ECR_REGISTRY}/${DOCKER_REPO}:${GITHUB_SHA}-arm
         docker manifest push ${ECR_REGISTRY}/${DOCKER_REPO}:${TAG}
-
-    # - name: Push manifest and related images to Amazon ECR
-    #   run: |
-    #     if [ "$GITHUB_REF_NAME" = "main" ]
-    #     then
-    #       TAG=latest
-    #     elif [[ $GITHUB_REF_NAME =~ (EAHW-[0-9]*) ]]
-    #     then
-    #       TAG=${match/#E/E}${BASH_REMATCH/#E/E}
-    #     else
-    #       TAG=${GITHUB_SHA}
-    #     fi
-    #     docker image push --all-tags ${ECR_REGISTRY}/${DOCKER_REPO}
-    #     docker manifest push ${ECR_REGISTRY}/${DOCKER_REPO}:${TAG}
