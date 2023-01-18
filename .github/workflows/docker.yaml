@@ -97,9 +97,18 @@ jobs:
     - name: Docker commit
       run: |
         docker stop keycloak-amd
-        docker commit keycloak-amd ${DOCKER_REPO}:${GITHUB_SHA}-amd
-        docker build --build-arg "image=${DOCKER_REPO}:${GITHUB_SHA}-amd" -t ${DOCKER_REPO}:${GITHUB_SHA}-amd .
+        docker commit keycloak-amd ${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
+        # docker build --build-arg "image=${{ env.DOCKER_REPO }}:${{ github.sha }}-amd" -t ${{ env.DOCKER_REPO }}:${{ github.sha }}-amd .
       shell: bash
+
+    - name: Build AMD image
+      uses: docker/build-push-action@v3
+      with:
+          context: .
+          push: false
+          tags: ${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
+          build-args: |
+            image=${{ env.DOCKER_REPO}:${{ github.sha }}-amd
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
