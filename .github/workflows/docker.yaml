@@ -29,7 +29,7 @@ jobs:
         image: tmohdit/keycloak:15.1.1
         options: >-
           --name keycloak-amd
-          --health-cmd "curl -f http://localhost:${{ job.services.keycloak-amd.ports[8080] }}/auth"
+          --health-cmd "curl -f http://keycloak-amd:9090/auth"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 6
