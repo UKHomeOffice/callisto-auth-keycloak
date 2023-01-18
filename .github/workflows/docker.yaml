@@ -98,9 +98,7 @@ jobs:
       run: |
         docker stop keycloak-amd
         docker commit keycloak-amd ${DOCKER_REPO}:${GITHUB_SHA}-amd
-        docker diff keycloak-amd
-        docker stop keycloak-arm
-        docker commit keycloak-arm ${DOCKER_REPO}:${GITHUB_SHA}-arm
+        docker build --build-arg "image=${DOCKER_REPO}:${GITHUB_SHA}-amd" -t ${DOCKER_REPO}:${GITHUB_SHA}-amd .
       shell: bash
 
     - name: Configure AWS credentials
