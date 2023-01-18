@@ -104,6 +104,7 @@ jobs:
     - name: Build AMD image
       uses: docker/build-push-action@v3
       with:
+          registry: ''
           context: .
           push: false
           tags: ${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
