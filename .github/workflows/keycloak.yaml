@@ -1,6 +1,9 @@
 name: Keycloak AMD and ARM
 on:
-  workflow_dispatch
+  workflow_dispatch:
+  push:
+    branches:
+      - 'EAHW-2540/task/create-multi-arch-keycloack-image'
 
 jobs:
   build-multi-arch-image:
