@@ -23,6 +23,14 @@ jobs:
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
       -
+        name: Build multi-arch image
+        uses: docker/build-push-action@v3
+        with:
+          context: ./server
+          platforms: linux/amd64,linux/arm64
+          push: false
+          tags: callisto/keycloak:15.0.2
+      -
         name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -33,10 +41,5 @@ jobs:
         name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1
       -
-        name: Build and push to Amazon ECR
-        uses: docker/build-push-action@v3
-        with:
-          context: ./server
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/keycloak:15.0.2
+        name: Push multi-arch image to ECR Registry
+        run: docker image push --all-tags 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/keycloak:15.0.2
