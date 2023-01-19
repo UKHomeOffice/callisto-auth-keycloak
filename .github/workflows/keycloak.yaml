@@ -42,4 +42,6 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
       -
         name: Push multi-arch image to ECR Registry
-        run: docker image push 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/keycloak:15.0.2
+        run: |
+          docker image ls
+          docker image push 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/keycloak:15.0.2
