@@ -25,9 +25,9 @@ jobs:
       DOCKER_REPO: callisto/auth-keycloak
 
     services:
-      keycloak-amd:
-        image: tmohdit/keycloak:15.1.1
-        options: --name keycloak-amd
+      keycloak:
+        image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/keycloak:15.0.2
+        options: --name keycloak
         env:
           KEYCLOAK_USER: admin
           KEYCLOAK_PASSWORD: admin
@@ -45,7 +45,7 @@ jobs:
     - uses: actions/checkout@v1
 
     - name: Wait for Keycloak
-      run: (docker logs -f keycloak-amd &) | grep -m 1 "Admin console listening on"
+      run: (docker logs -f keycloak &) | grep -m 1 "Admin console listening on"
       timeout-minutes: 1
 
     - name: Create S3 local bucket
@@ -54,27 +54,26 @@ jobs:
 
     - uses: hashicorp/setup-terraform@v2
 
-    - name: Terraform Init AMD
-      id: init-amd
-      run: terraform init -reconfigure -backend-config="endpoint=http://localhost:${{ job.services.localstack.ports[4566] }}" -backend-config="region=eu-west-2" -backend-config="skip_credentials_validation=true" -backend-config="skip_metadata_api_check=true" -backend-config="bucket=terraform" -backend-config="key=terraform-amd.tfstate" -backend-config="force_path_style=true"
+    - name: Terraform Init
+      id: init
+      run: terraform init -reconfigure -backend-config="endpoint=http://localhost:${{ job.services.localstack.ports[4566] }}" -backend-config="region=eu-west-2" -backend-config="skip_credentials_validation=true" -backend-config="skip_metadata_api_check=true" -backend-config="bucket=terraform" -backend-config="key=terraform.tfstate" -backend-config="force_path_style=true"
 
-    - name: Terraform Plan AMD
-      id: plan-amd
+    - name: Terraform Plan
+      id: plan
       env:
-        KEYCLOAK_URL: http://localhost:${{ job.services.keycloak-amd.ports[8080] }}
+        KEYCLOAK_URL: http://localhost:${{ job.services.keycloak.ports[8080] }}
       run: terraform plan -input=false -out=tfplan
 
-    - name: Terraform Apply AMD
-      id: apply-amd
+    - name: Terraform Apply
+      id: apply
       env:
-        KEYCLOAK_URL: http://localhost:${{ job.services.keycloak-amd.ports[8080] }}
+        KEYCLOAK_URL: http://localhost:${{ job.services.keycloak.ports[8080] }}
       run: terraform apply -input=false -auto-approve -input=false tfplan
 
     - name: Docker commit
       run: |
-        docker stop keycloak-amd
-        docker commit keycloak-amd ${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
-        # docker build --build-arg "image=${{ env.DOCKER_REPO }}:${{ github.sha }}-amd" -t ${{ env.DOCKER_REPO }}:${{ github.sha }}-amd .
+        docker stop keycloak
+        docker commit keycloak ${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
       shell: bash
 
     - name: Build ARM image
