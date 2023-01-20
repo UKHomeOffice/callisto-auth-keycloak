@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: keycloak/keycloak-containers
-          ref: '${{ github.event.inputs.keycloak_version }}'
+          ref: '${{ inputs.keycloak_version }}'
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -41,5 +41,5 @@ jobs:
         name: Build and Push multi-arch image to ECR Registry
         run: |
           cd server
-          docker buildx build --push --platform linux/amd64,linux/arm64 --tag 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/keycloak:'${{ github.event.inputs.keycloak_version }}' .
+          docker buildx build --push --platform linux/amd64,linux/arm64 --tag 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/keycloak:'${{ inputs.keycloak_version }}' .
           docker image ls
