@@ -25,14 +25,14 @@ jobs:
       DOCKER_REPO: callisto/auth-keycloak
 
     services:
-      keycloak:
-        image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/keycloak:15.0.2
-        options: --name keycloak
-        env:
-          KEYCLOAK_USER: admin
-          KEYCLOAK_PASSWORD: admin
-        ports:
-        - 8080
+#      keycloak:
+#        image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/keycloak:15.0.2
+#        options: --name keycloak
+#        env:
+#          KEYCLOAK_USER: admin
+#          KEYCLOAK_PASSWORD: admin
+#        ports:
+#        - 8080
       localstack:
         image: localstack/localstack
         options: --name localstack
@@ -43,6 +43,28 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.CALLISTO_AUTH_KEYCLOAK_DEPLOY_BOT_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.CALLISTO_AUTH_KEYCLOAK_DEPLOY_BOT_SECRET_ACCESS_KEY }}
+        aws-region: eu-west-2
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Setup Keycloak container
+      uses: actions/setup-container@v1
+      with:
+        container-name: keycloak
+        image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/keycloak:15.0.2
+        env:
+          KEYCLOAK_USER: admin
+          KEYCLOAK_PASSWORD: admin
+        ports:
+          - 8080
 
     - name: Wait for Keycloak
       run: (docker logs -f keycloak &) | grep -m 1 "Admin console listening on"
@@ -87,16 +109,16 @@ jobs:
           build-args: |
             image=${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.CALLISTO_AUTH_KEYCLOAK_DEPLOY_BOT_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.CALLISTO_AUTH_KEYCLOAK_DEPLOY_BOT_SECRET_ACCESS_KEY }}
-        aws-region: eu-west-2
-
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
+#    - name: Configure AWS credentials
+#      uses: aws-actions/configure-aws-credentials@v1
+#      with:
+#        aws-access-key-id: ${{ secrets.CALLISTO_AUTH_KEYCLOAK_DEPLOY_BOT_ACCESS_KEY_ID }}
+#        aws-secret-access-key: ${{ secrets.CALLISTO_AUTH_KEYCLOAK_DEPLOY_BOT_SECRET_ACCESS_KEY }}
+#        aws-region: eu-west-2
+#
+#    - name: Login to Amazon ECR
+#      id: login-ecr
+#      uses: aws-actions/amazon-ecr-login@v1
 
     - name: Push multi-arch images and manifest to ECR Registry
       run: |
