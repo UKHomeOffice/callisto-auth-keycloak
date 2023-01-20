@@ -7,6 +7,11 @@ on:
         required: true
         default: '15.0.2'
   push:
+    inputs:
+      keycloak_version:
+        description: 'Keycloak version'
+        required: true
+        default: '15.0.2'
     branches:
       - 'EAHW-2540/task/create-multi-arch-keycloack-image'
 
