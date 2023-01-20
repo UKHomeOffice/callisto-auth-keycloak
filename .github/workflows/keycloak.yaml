@@ -1,12 +1,12 @@
 name: Keycloak AMD and ARM
 on:
-  workflow_dispatch:
-    inputs:
-      keycloak_version:
-        type: string
-        description: 'Keycloak version'
-        required: true
-        default: '15.0.2'
+#  workflow_dispatch:
+#    inputs:
+#      keycloak_version:
+#        type: string
+#        description: 'Keycloak version'
+#        required: true
+#        default: '15.0.2'
   push:
     inputs:
       keycloak_version:
