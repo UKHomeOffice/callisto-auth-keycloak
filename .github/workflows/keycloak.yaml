@@ -14,9 +14,6 @@ jobs:
 
     steps:
       -
-        name: Output Inputs
-        run: echo "Keycloak version ${{ github.event.inputs.keycloak_version }} XXX ${{ inputs.keycloak_version }}"
-      -
         name: Checkout
         uses: actions/checkout@v3
         with:
@@ -39,7 +36,7 @@ jobs:
         name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1
       -
-        name: Build and Push multi-arch image to ECR Registry
+        name: Build and Push multi-arch image to Amazon ECR
         run: |
           cd server
           docker buildx build --push --platform linux/amd64,linux/arm64 --tag 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/keycloak:'${{ inputs.keycloak_version }}' .
