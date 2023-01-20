@@ -2,13 +2,15 @@ name: Keycloak AMD and ARM
 on:
   workflow_dispatch:
     inputs:
-      keycloak_version:
+      keycloakversion:
+        type: 'string'
         description: 'Keycloak version'
         required: true
         default: '15.0.2'
   push:
     inputs:
-      keycloak_version:
+      keycloakversion:
+        type: 'string'
         description: 'Keycloak version'
         required: true
         default: '15.0.2'
@@ -22,13 +24,13 @@ jobs:
     steps:
       -
         name: Output Inputs
-        run: echo "Keycloak version ${{ github.event.inputs.keycloak_version }}"
+        run: echo "Keycloak version ${{ github.event.inputs.keycloakversion }} XXX ${{ inputs.keycloakversion }}"
       -
         name: Checkout
         uses: actions/checkout@v3
         with:
           repository: keycloak/keycloak-containers
-          ref: '${{ inputs.keycloak_version }}'
+          ref: '${{ inputs.keycloakversion }}'
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -49,5 +51,5 @@ jobs:
         name: Build and Push multi-arch image to ECR Registry
         run: |
           cd server
-          docker buildx build --push --platform linux/amd64,linux/arm64 --tag 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/keycloak:'${{ inputs.keycloak_version }}' .
+          docker buildx build --push --platform linux/amd64,linux/arm64 --tag 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/keycloak:'${{ inputs.keycloakversion }}' .
           docker image ls
