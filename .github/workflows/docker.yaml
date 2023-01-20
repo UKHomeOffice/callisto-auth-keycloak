@@ -55,8 +55,8 @@ jobs:
 #        env:
 #          KEYCLOAK_USER: admin
 #          KEYCLOAK_PASSWORD: admin
-        ports:
-          - 8080
+#        ports:
+#          - 8080
 
     - name: Wait for Keycloak
       run: (docker logs -f keycloak &) | grep -m 1 "Admin console listening on"
