@@ -22,7 +22,7 @@ jobs:
     steps:
       -
         name: Output Inputs
-        run: echo "${{ toJSON(github.event.inputs) }}"
+        run: echo "Keycloak version ${{ github.event.inputs.keycloak_version }}"
       -
         name: Checkout
         uses: actions/checkout@v3
