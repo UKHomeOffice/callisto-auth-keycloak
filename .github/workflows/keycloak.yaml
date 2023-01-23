@@ -40,4 +40,3 @@ jobs:
         run: |
           cd server
           docker buildx build --push --platform linux/amd64,linux/arm64 --tag 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/keycloak:'${{ inputs.keycloak_version }}' .
-          docker image ls
