@@ -50,7 +50,7 @@ jobs:
     - name: Setup Keycloak container
       run: |
         docker pull 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/keycloak:15.0.2
-        docker run --name keycloak -p 127.0.0.1:9090:8080 -env KEYCLOAK_USER=admin -env KEYCLOAK_PASSWORD=admin
+        docker run --name keycloak -p 127.0.0.1:9090:8080 --env KEYCLOAK_USER=admin --env KEYCLOAK_PASSWORD=admin
 
     - name: Wait for Keycloak
       run: (docker logs -f keycloak &) | grep -m 1 "Admin console listening on"
