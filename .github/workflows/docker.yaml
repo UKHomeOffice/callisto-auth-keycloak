@@ -44,7 +44,7 @@ jobs:
         aws-region: eu-west-2
 
     - name: Login to Amazon ECR
-      id: login-ecr
+      id: login-ecr-keycloak
       uses: aws-actions/amazon-ecr-login@v1
 
     - name: Setup Keycloak container
@@ -92,7 +92,7 @@ jobs:
         aws-region: eu-west-2
 
     - name: Login to Amazon ECR
-      id: login-ecr
+      id: login-ecr-auth-keycloak
       uses: aws-actions/amazon-ecr-login@v1
 
 
