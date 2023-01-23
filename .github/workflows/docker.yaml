@@ -48,15 +48,9 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v1
 
     - name: Setup Keycloak container
-      uses: actions/setup-container@v1
-      with:
-        container-name: keycloak
-        image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/keycloak:15.0.2
-#        env:
-#          KEYCLOAK_USER: admin
-#          KEYCLOAK_PASSWORD: admin
-#        ports:
-#          - 8080
+      run: |
+        docker pull 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/keycloak:15.0.2
+        docker run --name keycloak -p 127.0.0.1:9090:8080 -env KEYCLOAK_USER=admin -env KEYCLOAK_PASSWORD=admin
 
     - name: Wait for Keycloak
       run: (docker logs -f keycloak &) | grep -m 1 "Admin console listening on"
@@ -75,13 +69,13 @@ jobs:
     - name: Terraform Plan
       id: plan
       env:
-        KEYCLOAK_URL: http://localhost:${{ job.services.keycloak.ports[8080] }}
+        KEYCLOAK_URL: http://localhost:9090
       run: terraform plan -input=false -out=tfplan
 
     - name: Terraform Apply
       id: apply
       env:
-        KEYCLOAK_URL: http://localhost:${{ job.services.keycloak.ports[8080] }}
+        KEYCLOAK_URL: http://localhost:9090
       run: terraform apply -input=false -auto-approve -input=false tfplan
 
     - name: Docker commit
