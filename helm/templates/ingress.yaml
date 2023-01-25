@@ -17,7 +17,7 @@ spec:
   tls:
     - hosts:
         -  keycloak.dev.callisto-notprod.homeoffice.gov.uk
-      secretName: callisto-keycloak-tls-{{ .Values.branch }}
+      secretName: callisto-keycloak-tls
   rules:
     - host: keycloak.dev.callisto-notprod.homeoffice.gov.uk
       http:
