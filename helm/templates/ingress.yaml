@@ -16,10 +16,10 @@ metadata:
 spec:
   tls:
     - hosts:
-        -  https://keycloak.dev.callisto-notprod.homeoffice.gov.uk
+        -  keycloak.dev.callisto-notprod.homeoffice.gov.uk
       secretName: callisto-keycloak-tls-{{ .Values.branch }}
   rules:
-    - host: https://keycloak.dev.callisto-notprod.homeoffice.gov.uk
+    - host: keycloak.dev.callisto-notprod.homeoffice.gov.uk
       http:
         paths:
             - path: /
