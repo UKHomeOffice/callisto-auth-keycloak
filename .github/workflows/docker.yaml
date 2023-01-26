@@ -96,7 +96,7 @@ jobs:
       - name: Docker commit
         run: |
           docker stop keycloak
-          docker commit keycloak ${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
+          docker commit keycloak ${{ env.DOCKER_REGISTRY}}/${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
         shell: bash
 
       # - name: Build ARM image
@@ -114,7 +114,7 @@ jobs:
         uses: redhat-actions/buildah-build@v2
         with:
           image: ${{ env.DOCKER_REPO }}
-          tags: ${{ env.DOCKER_REPO }}:${{ github.sha }}-arm
+          tags: ${{ env.DOCKER_REGISTRY}}/${{ env.DOCKER_REPO }}:${{ github.sha }}-arm
           arch: linux/arm64
           build-args: image=${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
           containerfiles: |
