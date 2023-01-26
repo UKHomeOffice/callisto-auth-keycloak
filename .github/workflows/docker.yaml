@@ -64,6 +64,7 @@ jobs:
         run: (docker logs -f keycloak &) | grep -m 1 "Admin console listening on"
         timeout-minutes: 1
 
+      # Remove below step. This is just to log running containers
       - name: Docker Ps
         run: docker ps
         shell: bash
@@ -90,11 +91,25 @@ jobs:
           KEYCLOAK_URL: http://localhost:9090
         run: terraform apply -input=false -auto-approve -input=false tfplan
 
+      - name: Log in to Quay.io
+        uses: redhat-actions/podman-login@v1
+        with:
+          username: ${{ secrets.QUAY_ROBOT_NAME }}
+          password: ${{ secrets.QUAY_ROBOT_TOKEN }}
+          registry: ${{ env.DOCKER_REGISTRY }}
+
       - name: Docker commit
         run: |
           docker stop keycloak
           docker commit keycloak ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
         shell: bash
+
+      - name: Log in to Quay.io
+        uses: redhat-actions/podman-login@v1
+        with:
+          username: ${{ secrets.QUAY_ROBOT_NAME }}
+          password: ${{ secrets.QUAY_ROBOT_TOKEN }}
+          registry: ${{ env.DOCKER_REGISTRY }}
 
       - name: Build ARM image
         uses: docker/build-push-action@v3
