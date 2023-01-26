@@ -44,7 +44,7 @@ jobs:
           - 9090:8080
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
 
       - name: Configure AWS credentials (callisto/keycloak repo)
         uses: aws-actions/configure-aws-credentials@v1
@@ -99,9 +99,9 @@ jobs:
           platforms: linux/arm64
           context: .
           push: false
-          tags: ${{ env.DOCKER_REPO }}:${{ github.sha }}-arm
+          tags: ukhomeofficedigital/${{ env.DOCKER_REPO }}:${{ github.sha }}-arm
           build-args: |
-            image=${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
+            image=ukhomeofficedigital/${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
 
       - name: Push multi-arch images and manifest to QUAY Registry (callisto/auth-keycloak repo)
         run: |
