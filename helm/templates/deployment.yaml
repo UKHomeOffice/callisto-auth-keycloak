@@ -32,3 +32,8 @@ spec:
           ports:
             - name: http
               containerPort: 8080
+          env:
+            - name: KEYCLOAK_USER
+              value: admin
+            - name: KEYCLOAK_PASSWORD
+              value: admin
