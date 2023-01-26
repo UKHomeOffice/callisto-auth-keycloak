@@ -102,7 +102,7 @@ jobs:
       - name: Build ARM image
         uses: docker/build-push-action@v3
         with:
-          registry: ""
+          registry: ${{ env.DOCKER_REGISTRY }}
           platforms: linux/arm64
           context: .
           push: false
