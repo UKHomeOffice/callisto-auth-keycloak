@@ -60,13 +60,6 @@ jobs:
           username: ${{ secrets.QUAY_ROBOT_NAME }}
           password: ${{ secrets.QUAY_ROBOT_TOKEN }}
 
-      # - name: Login to Amazon ECR (callisto/keycloak repo)
-      #   id: login-ecr-keycloak
-      #   uses: aws-actions/amazon-ecr-login@v1
-
-      # - name: Setup Keycloak container
-      #   run: docker run --name keycloak -p 9090:8080 -d --env KEYCLOAK_USER=admin --env KEYCLOAK_PASSWORD=admin ${ECR_REGISTRY}/callisto/keycloak:15.0.2
-
       - name: Wait for Keycloak
         run: (docker logs -f keycloak &) | grep -m 1 "Admin console listening on"
         timeout-minutes: 1
@@ -96,42 +89,20 @@ jobs:
       - name: Docker commit
         run: |
           docker stop keycloak
-          docker commit keycloak ${{ env.DOCKER_REGISTRY}}/${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
+          docker commit keycloak ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
         shell: bash
-
-      # - name: Build ARM image
-      #   uses: docker/build-push-action@v3
-      #   with:
-      #     registry: ${{ env.DOCKER_REGISTRY }}
-      #     platforms: linux/arm64
-      #     context: .
-      #     push: false
-      #     tags: ${{ env.DOCKER_REPO }}:${{ github.sha }}-arm
-      #     build-args: |
-      #       image=${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
 
       - name: Buildah ARM Image v2
         uses: redhat-actions/buildah-build@v2
         with:
-          image: ${{ env.DOCKER_REGISTRY}}/${{ env.DOCKER_REPO }}
-          tags: ${{ env.DOCKER_REGISTRY}}/${{ env.DOCKER_REPO }}:${{ github.sha }}-arm
+          image: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_REPO }}
+          tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_REPO }}:${{ github.sha }}-arm
           arch: linux/arm64
-          build-args: image=${{ env.DOCKER_REGISTRY}}/${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
+          build-args: image=${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
           containerfiles: |
             ./Dockerfile
 
-      - name: Configure AWS credentials (callisto/auth-keycloak repo)
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.CALLISTO_AUTH_KEYCLOAK_DEPLOY_BOT_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.CALLISTO_AUTH_KEYCLOAK_DEPLOY_BOT_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-2
-
-      # - name: Login to Amazon ECR (callisto/auth-keycloak repo)
-      #   id: login-ecr-auth-keycloak
-      #   uses: aws-actions/amazon-ecr-login@v1
-
-      - name: Push multi-arch images and manifest to ECR Registry (callisto/auth-keycloak repo)
+      - name: Push multi-arch images and manifest to QUAY Registry (callisto/auth-keycloak repo)
         run: |
           if [ "$GITHUB_REF_NAME" = "main" ]
           then
