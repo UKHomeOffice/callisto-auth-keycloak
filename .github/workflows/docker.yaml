@@ -90,7 +90,7 @@ jobs:
       - name: Docker commit
         run: |
           docker stop keycloak
-          docker commit keycloak ${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
+          docker commit keycloak ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
         shell: bash
 
       - name: Build ARM image
@@ -102,7 +102,7 @@ jobs:
           push: false
           tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_REPO }}:${{ github.sha }}-arm
           build-args: |
-            image=${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
+            image=${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
 
       - name: Push multi-arch images and manifest to QUAY Registry (callisto/auth-keycloak repo)
         run: |
