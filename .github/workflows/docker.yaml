@@ -53,6 +53,13 @@ jobs:
           aws-secret-access-key: ${{ secrets.CALLISTO_KEYCLOAK_DEPLOY_BOT_SECRET_ACCESS_KEY }}
           aws-region: eu-west-2
 
+      - name: Login to Quay.io Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: quay.io
+          username: ${{ secrets.QUAY_ROBOT_NAME }}
+          password: ${{ secrets.QUAY_ROBOT_TOKEN }}
+
       # - name: Login to Amazon ECR (callisto/keycloak repo)
       #   id: login-ecr-keycloak
       #   uses: aws-actions/amazon-ecr-login@v1
@@ -86,29 +93,32 @@ jobs:
           KEYCLOAK_URL: http://localhost:9090
         run: terraform apply -input=false -auto-approve -input=false tfplan
 
-      - name: Login to Quay.io Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: quay.io
-          username: ${{ secrets.QUAY_ROBOT_NAME }}
-          password: ${{ secrets.QUAY_ROBOT_TOKEN }}
-
       - name: Docker commit
         run: |
           docker stop keycloak
           docker commit keycloak ${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
         shell: bash
 
-      - name: Build ARM image
-        uses: docker/build-push-action@v3
+      # - name: Build ARM image
+      #   uses: docker/build-push-action@v3
+      #   with:
+      #     registry: ${{ env.DOCKER_REGISTRY }}
+      #     platforms: linux/arm64
+      #     context: .
+      #     push: false
+      #     tags: ${{ env.DOCKER_REPO }}:${{ github.sha }}-arm
+      #     build-args: |
+      #       image=${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
+
+      - name: Buildah ARM Image v2
+        uses: redhat-actions/buildah-build@v2
         with:
-          registry: ${{ env.DOCKER_REGISTRY }}
-          platforms: linux/arm64
-          context: .
-          push: false
+          image: ${{ env.DOCKER_REPO }}
           tags: ${{ env.DOCKER_REPO }}:${{ github.sha }}-arm
-          build-args: |
-            image=${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
+          arch: linux/arm64
+          build-args: image=${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
+          containerfiles: |
+            ./Dockerfile
 
       - name: Configure AWS credentials (callisto/auth-keycloak repo)
         uses: aws-actions/configure-aws-credentials@v1
