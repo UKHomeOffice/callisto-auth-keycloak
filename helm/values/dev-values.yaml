@@ -1,8 +1,8 @@
 service:
-  port: 9090
+  port: 8080
 
 replicaCount: 1
 
 image:
-  repo: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/ #I don't think the image is in quay, do we need to add it? I can't work out where it is being pushed to ECR
+  repo: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/
   tag: latest # this value will be overridden by drone.yml

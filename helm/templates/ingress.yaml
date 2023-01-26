@@ -28,4 +28,4 @@ spec:
                 service:
                   name: {{ .Release.Name }}
                   port:
-                    number: 9090
+                    number: 8080
