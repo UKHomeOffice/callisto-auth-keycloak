@@ -92,15 +92,16 @@ jobs:
           docker commit keycloak ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
         shell: bash
 
-      - name: Buildah ARM Image v2
-        uses: redhat-actions/buildah-build@v2
+      - name: Build ARM image
+        uses: docker/build-push-action@v3
         with:
-          image: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_REPO }}
-          tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_REPO }}:${{ github.sha }}-arm
-          arch: linux/arm64
-          build-args: image=${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
-          containerfiles: |
-            ./Dockerfile
+          registry: quay.io
+          platforms: linux/arm64
+          context: .
+          push: false
+          tags: ${{ env.DOCKER_REPO }}:${{ github.sha }}-arm
+          build-args: |
+            image=${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
 
       - name: Push multi-arch images and manifest to QUAY Registry (callisto/auth-keycloak repo)
         run: |
