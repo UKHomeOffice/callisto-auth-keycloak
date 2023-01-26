@@ -46,28 +46,16 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Configure AWS credentials (callisto/keycloak repo) - remove
+      - name: Wait for Keycloak
+        run: (docker logs -f keycloak &) | grep -m 1 "Admin console listening on"
+        timeout-minutes: 1
+
+      - name: Configure AWS credentials (callisto/keycloak repo)
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.CALLISTO_KEYCLOAK_DEPLOY_BOT_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.CALLISTO_KEYCLOAK_DEPLOY_BOT_SECRET_ACCESS_KEY }}
           aws-region: eu-west-2
-
-      - name: Log in to Quay.io
-        uses: redhat-actions/podman-login@v1
-        with:
-          username: ${{ secrets.QUAY_ROBOT_NAME }}
-          password: ${{ secrets.QUAY_ROBOT_TOKEN }}
-          registry: ${{ env.DOCKER_REGISTRY }}
-
-      - name: Wait for Keycloak
-        run: (docker logs -f keycloak &) | grep -m 1 "Admin console listening on"
-        timeout-minutes: 1
-
-      # Remove below step. This is just to log running containers
-      - name: Docker Ps
-        run: docker ps
-        shell: bash
 
       - name: Create S3 local bucket
         run: |
@@ -104,13 +92,6 @@ jobs:
           docker commit keycloak ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
         shell: bash
 
-      - name: Log in to Quay.io
-        uses: redhat-actions/podman-login@v1
-        with:
-          username: ${{ secrets.QUAY_ROBOT_NAME }}
-          password: ${{ secrets.QUAY_ROBOT_TOKEN }}
-          registry: ${{ env.DOCKER_REGISTRY }}
-
       - name: Build ARM image
         uses: docker/build-push-action@v3
         with:
@@ -118,9 +99,9 @@ jobs:
           platforms: linux/arm64
           context: .
           push: false
-          tags: quay.io/ukhomeofficedigital/${{ env.DOCKER_REPO }}:${{ github.sha }}-arm
+          tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_REPO }}:${{ github.sha }}-arm
           build-args: |
-            image=quay.io/ukhomeofficedigital/${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
+            image=${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
 
       - name: Push multi-arch images and manifest to QUAY Registry (callisto/auth-keycloak repo)
         run: |
