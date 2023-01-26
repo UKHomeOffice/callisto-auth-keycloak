@@ -118,9 +118,9 @@ jobs:
           platforms: linux/arm64
           context: .
           push: false
-          tags: ukhomeofficedigital/${{ env.DOCKER_REPO }}:${{ github.sha }}-arm
+          tags: quay.io/ukhomeofficedigital/${{ env.DOCKER_REPO }}:${{ github.sha }}-arm
           build-args: |
-            image=ukhomeofficedigital/${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
+            image=quay.io/ukhomeofficedigital/${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
 
       - name: Push multi-arch images and manifest to QUAY Registry (callisto/auth-keycloak repo)
         run: |
