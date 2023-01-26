@@ -37,6 +37,7 @@ jobs:
           docker buildx build --push --platform linux/amd64,linux/arm64 --tag quay.io/ukhomeofficedigital/callisto-keycloak:15.0.2 .
 
   build-docker-image:
+    needs: build-multi-arch-image
     defaults:
       run:
         working-directory: ./config
