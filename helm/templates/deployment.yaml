@@ -37,3 +37,5 @@ spec:
               value: admin
             - name: KEYCLOAK_PASSWORD
               value: admin
+            - name: PROXY_ADDRESS_FORWARDING
+              value: true
