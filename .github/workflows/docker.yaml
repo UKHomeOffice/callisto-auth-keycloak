@@ -23,7 +23,7 @@ jobs:
       TF_VAR_callisto_url: https://web.callisto.localhost
       TF_VAR_include_test_users: true
       DOCKER_REGISTRY: quay.io/ukhomeofficedigital
-      DOCKER_REPO: callisto-keycloak
+      DOCKER_REPO: callisto-auth-keycloak
 
     services:
       localstack:
@@ -38,7 +38,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Start Keycloak container
-        run: docker run --name keycloak -p 9090:8080 -d --env KEYCLOAK_USER=admin --env KEYCLOAK_PASSWORD=admin ${DOCKER_REGISTRY}/${DOCKER_REPO}:15.0.2
+        run: docker run --name keycloak -p 9090:8080 -d --env KEYCLOAK_USER=admin --env KEYCLOAK_PASSWORD=admin ${DOCKER_REGISTRY}/callisto-keycloak:15.0.2
 
       - name: Wait for Keycloak
         run: (docker logs -f keycloak &) | grep -m 1 "Admin console listening on"
