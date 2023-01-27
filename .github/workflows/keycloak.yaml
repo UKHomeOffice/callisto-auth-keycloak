@@ -36,4 +36,4 @@ jobs:
       - name: Build and Push multi-arch image to Amazon ECR
         run: |
           cd server
-          docker buildx build --push --platform linux/amd64,linux/arm64 --tag quay.io/ukhomeofficedigital/callisto-keycloak:'${{ inputs.keycloak_version }}' .
+          docker buildx build --push --platform linux/amd64,linux/arm64 --tag quay.io/ukhomeofficedigital/callisto-keycloak:15.0.2 .
