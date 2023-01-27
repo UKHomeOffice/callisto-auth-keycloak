@@ -1,7 +1,7 @@
 ---
 kind: pipeline
 type: kubernetes
-name: callisto-keycloak-deploy
+name: callisto-keycloak-dev-deploy
 
 platform:
   os: linux
@@ -14,7 +14,7 @@ trigger:
     - main
 
 steps:
-  - name: deploy
+  - name: deploy to dev
     image: pelotech/drone-helm3
     settings:
       namespace: callisto-dev
