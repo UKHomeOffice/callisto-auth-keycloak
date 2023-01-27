@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: keycloak/keycloak-containers
-          ref: "15.0.2"
+          ref: "${{ inputs.keycloak_version }}"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -36,4 +36,4 @@ jobs:
       - name: Build and Push multi-arch image to Amazon ECR
         run: |
           cd server
-          docker buildx build --push --platform linux/amd64,linux/arm64 --tag quay.io/ukhomeofficedigital/callisto-keycloak:'15.0.2' .
+          docker buildx build --push --platform linux/amd64,linux/arm64 --tag quay.io/ukhomeofficedigital/callisto-keycloak:'${{ inputs.keycloak_version }}' .
