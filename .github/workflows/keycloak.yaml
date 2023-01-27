@@ -11,14 +11,14 @@ on:
 jobs:
   build-multi-arch-image:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    #if: github.ref == 'refs/heads/main'
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
           repository: keycloak/keycloak-containers
-          ref: "${{ inputs.keycloak_version }}"
+          ref: 15.0.2
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
