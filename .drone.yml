@@ -32,6 +32,7 @@ steps:
       TF_VAR_include_test_users:
         from_secret: TF_VAR_include_test_users
     commands:
+      - cd ./config
       - KEYCLOAK_URL=${KEYCLOAK_URL} KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID} KEYCLOAK_USER=${KEYCLOAK_USER} KEYCLOAK_PASSWORD=${KEYCLOAK_PASSWORD} TF_VAR_callisto_realm=${TF_VAR_callisto_realm} TF_VAR_callisto_url=${TF_VAR_callisto_url} TF_VAR_include_test_users=${TF_VAR_include_test_users} terraform plan
 
 
