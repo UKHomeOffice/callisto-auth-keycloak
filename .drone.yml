@@ -19,6 +19,8 @@ steps:
     environment:
       KEYCLOAK_URL:
         from_secret: KEYCLOAK_URL
+      KEYCLOAK_REALM:
+        from_secret: KEYCLOAK_REALM
       KEYCLOAK_CLIENT_ID:
         from_secret: KEYCLOAK_CLIENT_ID
       KEYCLOAK_CLIENT_SECRET:
