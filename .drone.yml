@@ -1,0 +1,35 @@
+---
+kind: pipeline
+type: kubernetes
+name: branch-terraform
+
+platform:
+  os: linux
+  arch: amd64
+
+trigger:
+  event:
+    - push
+#  branch:
+#    - main
+
+steps:
+  - name: terraform apply
+    image: jmccann/drone-terraform:1
+    settings:
+      plan: false
+      secrets:
+        KEYCLOAK_URL:
+          from_secret: KEYCLOAK_URL
+        KEYCLOAK_CLIENT_ID:
+          from_secret: KEYCLOAK_CLIENT_ID
+        KEYCLOAK_USER:
+          from_secret: KEYCLOAK_USER
+        KEYCLOAK_PASSWORD:
+          from_secret: KEYCLOAK_PASSWORD
+        TF_VAR_callisto_realm:
+          from_secret: TF_VAR_callisto_realm
+        TF_VAR_callisto_url:
+          from_secret: TF_VAR_callisto_url
+        TF_VAR_include_test_users:
+          from_secret: TF_VAR_include_test_users
