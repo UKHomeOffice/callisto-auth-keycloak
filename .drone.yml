@@ -15,7 +15,7 @@ trigger:
 
 steps:
   - name: terraform apply
-    image: jmccann/drone-terraform:1
+    image: jmccann/drone-terraform:latest
     settings:
       plan: false
       secrets:
