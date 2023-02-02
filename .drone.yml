@@ -15,23 +15,49 @@ trigger:
 
 steps:
   - name: terraform apply
-    image: jmccann/drone-terraform:latest
-    settings:
-      actions:
-        - apply
-      plan: false
-      secrets:
-        KEYCLOAK_URL:
-          from_secret: KEYCLOAK_URL
-        KEYCLOAK_CLIENT_ID:
-          from_secret: KEYCLOAK_CLIENT_ID
-        KEYCLOAK_USER:
-          from_secret: KEYCLOAK_USER
-        KEYCLOAK_PASSWORD:
-          from_secret: KEYCLOAK_PASSWORD
-        TF_VAR_callisto_realm:
-          from_secret: TF_VAR_callisto_realm
-        TF_VAR_callisto_url:
-          from_secret: TF_VAR_callisto_url
-        TF_VAR_include_test_users:
-          from_secret: TF_VAR_include_test_users
+    image: hashicorp/terraform:latest
+    environment:
+      KEYCLOAK_URL:
+        from_secret: KEYCLOAK_URL
+      KEYCLOAK_CLIENT_ID:
+        from_secret: KEYCLOAK_CLIENT_ID
+      KEYCLOAK_USER:
+        from_secret: KEYCLOAK_USER
+      KEYCLOAK_PASSWORD:
+        from_secret: KEYCLOAK_PASSWORD
+      TF_VAR_callisto_realm:
+        from_secret: TF_VAR_callisto_realm
+      TF_VAR_callisto_url:
+        from_secret: TF_VAR_callisto_url
+      TF_VAR_include_test_users:
+        from_secret: TF_VAR_include_test_users
+    commands:
+      - KEYCLOAK_URL=${KEYCLOAK_URL} KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID} \
+        KEYCLOAK_USER=${KEYCLOAK_USER} KEYCLOAK_PASSWORD=${KEYCLOAK_PASSWORD} \
+        TF_VAR_callisto_realm=${TF_VAR_callisto_realm} TF_VAR_callisto_url=${TF_VAR_callisto_url} \
+        TF_VAR_include_test_users=${TF_VAR_include_test_users} terraform plan
+
+
+
+
+#  - name: terraform apply
+#    image: jmccann/drone-terraform:latest
+#    settings:
+#      actions:
+#        - apply
+#      plan: false
+#      secrets:
+#        KEYCLOAK_URL:
+#          from_secret: KEYCLOAK_URL
+#        KEYCLOAK_CLIENT_ID:
+#          from_secret: KEYCLOAK_CLIENT_ID
+#        KEYCLOAK_USER:
+#          from_secret: KEYCLOAK_USER
+#        KEYCLOAK_PASSWORD:
+#          from_secret: KEYCLOAK_PASSWORD
+#        TF_VAR_callisto_realm:
+#          from_secret: TF_VAR_callisto_realm
+#        TF_VAR_callisto_url:
+#          from_secret: TF_VAR_callisto_url
+#        TF_VAR_include_test_users:
+#          from_secret: TF_VAR_include_test_users
