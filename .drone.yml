@@ -1,6 +1,6 @@
 ---
 kind: pipeline
-type: docker
+type: kubernetes
 name: branch-terraform
 
 platform:
@@ -17,6 +17,8 @@ steps:
   - name: terraform apply
     image: jmccann/drone-terraform:latest
     settings:
+      actions:
+        - apply
       plan: false
       secrets:
         KEYCLOAK_URL:
