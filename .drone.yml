@@ -38,7 +38,8 @@ steps:
     commands:
       - cd ./config
       - terraform init -reconfigure -backend-config="region=eu-west-2" -backend-config="access_key=$TF_S3_ACCESS_KEY" -backend-config="secret_key=$TF_S3_SECRET_KEY" -backend-config="bucket=ho-callisto-terraform" -backend-config="key=terraform/build/callisto-auth-keycloak/callisto-branch"
-      - KEYCLOAK_URL=$KEYCLOAK_URL KEYCLOAK_CLIENT_ID=$KEYCLOAK_CLIENT_ID KEYCLOAK_USER=$KEYCLOAK_USER KEYCLOAK_PASSWORD=$KEYCLOAK_PASSWORD TF_VAR_callisto_realm=$TF_VAR_callisto_realm TF_VAR_callisto_url=$TF_VAR_callisto_url TF_VAR_include_test_users=$TF_VAR_include_test_users terraform apply -auto-approve
+      - KEYCLOAK_URL=$KEYCLOAK_URL KEYCLOAK_CLIENT_ID=$KEYCLOAK_CLIENT_ID KEYCLOAK_USER=$KEYCLOAK_USER KEYCLOAK_PASSWORD=$KEYCLOAK_PASSWORD TF_VAR_callisto_realm=$TF_VAR_callisto_realm TF_VAR_callisto_url=$TF_VAR_callisto_url TF_VAR_include_test_users=$TF_VAR_include_test_users terraform plan -input=false -out=tfplan
+      - KEYCLOAK_URL=$KEYCLOAK_URL KEYCLOAK_CLIENT_ID=$KEYCLOAK_CLIENT_ID KEYCLOAK_USER=$KEYCLOAK_USER KEYCLOAK_PASSWORD=$KEYCLOAK_PASSWORD TF_VAR_callisto_realm=$TF_VAR_callisto_realm TF_VAR_callisto_url=$TF_VAR_callisto_url TF_VAR_include_test_users=$TF_VAR_include_test_users terraform apply -input=false -auto-approve tfplan
 
 
 
