@@ -50,6 +50,6 @@ spec:
 #            - name: keycloak-volume
 #              mountPath: /keycloak-config
       volumes:
-        - name: keycloak-volume
+      - name: keycloak-volume
         persistentVolumeClaim:
           claimName: {{ .Release.Name }}-volume-claim
