@@ -33,7 +33,7 @@ spec:
             - name: http
               containerPort: 8080
           volumeMounts:
-            - mountPath: /opt/jboss/
+            - mountPath: /opt/jboss/conf
               name: keycloak-volume
           env:
             - name: KEYCLOAK_USER
