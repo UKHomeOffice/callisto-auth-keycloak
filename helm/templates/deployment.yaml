@@ -52,7 +52,7 @@ spec:
             - name: keycloak-volume
               mountPath: /keycloakVolume
           command: ["cp"]
-          args: ["-r", "opts/jboss/.", "keycloakVolume"]
+          args: ["-r", "opts/jboss/", "keycloakVolume"]
       volumes:
       - name: keycloak-volume
         persistentVolumeClaim:
