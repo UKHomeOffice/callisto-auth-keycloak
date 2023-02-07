@@ -18,6 +18,7 @@ spec:
         app: {{ .Release.Name }}
     spec:
       securityContext:
+        fsGroup: 1000
         runAsUser: 1000
         runAsGroup: 1000
       containers:
@@ -51,8 +52,10 @@ spec:
           volumeMounts:
             - name: keycloak-volume
               mountPath: /keycloakVolume
-          command: ["cp"]
-          args: ["-r", "opt/jboss/", "keycloakVolume"]
+          command: ["/bin/bash", "-c"]
+          args:
+          - chown -R 1000:1000
+          - cp -r opt/jboss/ keycloakVolume
       volumes:
       - name: keycloak-volume
         persistentVolumeClaim:
