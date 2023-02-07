@@ -54,7 +54,7 @@ spec:
               mountPath: /keycloakVolume
           command: ["/bin/bash", "-c"]
           args:
-          - chown -R 1000:1000 keycloakVolume
+#          - chown -R 1000:1000 keycloakVolume
           - cp -r opt/jboss/ keycloakVolume
       volumes:
       - name: keycloak-volume
