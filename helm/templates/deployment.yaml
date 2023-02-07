@@ -7,6 +7,8 @@ metadata:
     app: {{ .Release.Name }}
 spec:
   replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: {{ .Release.Name }}
@@ -42,13 +44,15 @@ spec:
               value: admin
             - name: PROXY_ADDRESS_FORWARDING
               value: 'true'
-#      initContainers:
-#        - name: keycloak-persistent-volume
-#          image: alpine:latest
-#          imagePullPolicy: Always
-#          volumeMounts:
-#            - name: keycloak-volume
-#              mountPath: /keycloak-config
+      initContainers:
+        - name: keycloak-persistent-volume
+          image: {{ .Values.image.repo }}keycloak:{{ .Values.keycloakVersion }}
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: keycloak-volume
+              mountPath: /keycloakVolume
+          command: ["cp"]
+          args: ["-r", "opts/jboss/.", "keycloakVolume"]
       volumes:
       - name: keycloak-volume
         persistentVolumeClaim:
