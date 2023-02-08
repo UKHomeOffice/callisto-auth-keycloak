@@ -78,3 +78,39 @@ The job can also be triggered manually using GitHub client:
 ```shell
 gh workflow run "Keycloak AMD and ARM" --ref <git_branch> -f keycloak_version=<desired_keycloak_version>
 ```
+
+## Branch deployments
+
+If for some reason the keycloak config volume gets deleted or the callisto-keycloak helm chart is uninstalled,
+we will need to run an init container which copies the keycloak config into the volume.
+
+The following code will need adding inside the spec section of `deployment.yaml`: 
+
+```yaml
+      initContainers:
+        - name: keycloak-persistent-volume
+          image: {{ .Values.image.repo }}keycloak:{{ .Values.keycloakVersion }}
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: keycloak-config-volume
+              mountPath: /keycloakVolume
+          command: ["/bin/bash", "-c"]
+          args:
+            - cp -r opt/jboss/. keycloakVolume
+```
+
+It will only need to be run once and the code can be removed after the init container has run. The reason for doing this
+is because the persistent volume has ReadWriteOnce access, so the deployment will fail if the init container is left in.
+
+Once the keycloak files have been copied into the volume, run the following commands to create the Callisto realm and 
+terraform client:
+
+```shell
+terraform init -reconfigure -backend-config="region=eu-west-2" -backend-config="access_key=*****" -backend-config="secret_key=*****" -backend-config="bucket=*****" -backend-config="key=terraform/build/callisto-auth-keycloak/callisto-branch"
+```
+
+```shell
+KEYCLOAK_URL=https://keycloak.dev.callisto-notprod.homeoffice.gov.uk KEYCLOAK_CLIENT_ID=admin-cli KEYCLOAK_USER=admin KEYCLOAK_PASSWORD=admin TF_VAR_callisto_realm=callisto TF_VAR_callisto_url= TF_VAR_include_test_users=true terraform apply
+```
+
+Access key and secret key for the terraform s3 bucket can be found in Kubernetes secrets.
