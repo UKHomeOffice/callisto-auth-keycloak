@@ -45,16 +45,6 @@ spec:
               value: admin
             - name: PROXY_ADDRESS_FORWARDING
               value: 'true'
-      initContainers:
-        - name: keycloak-persistent-volume
-          image: {{ .Values.image.repo }}keycloak:{{ .Values.keycloakVersion }}
-          imagePullPolicy: Always
-          volumeMounts:
-            - name: keycloak-config-volume
-              mountPath: /keycloakVolume
-          command: ["/bin/bash", "-c"]
-          args:
-            - cp -r opt/jboss/. keycloakVolume
       volumes:
         - name: keycloak-config-volume
           persistentVolumeClaim:
