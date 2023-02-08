@@ -56,6 +56,6 @@ spec:
           args:
             - cp -r opt/jboss/. keycloakVolume
       volumes:
-      - name: keycloak-config-volume
-        persistentVolumeClaim:
-          claimName: {{ .Release.Name }}-persistent-volume-claim
+        - name: keycloak-config-volume
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-persistent-volume-claim
