@@ -100,7 +100,8 @@ The following code will need adding inside the spec section of `deployment.yaml`
 ```
 
 It will only need to be run once and the code can be removed after the init container has run. The reason for doing this
-is because the persistent volume has ReadWriteOnce access, so the deployment will fail if the init container is left in.
+is because the persistent volume has ReadWriteOnce access, so the deployment will fail if the init container is left in. 
+ReadWriteMany is not allowed by ACP. 
 
 Once the keycloak files have been copied into the volume, run the following commands to create the Callisto realm and 
 terraform client:
