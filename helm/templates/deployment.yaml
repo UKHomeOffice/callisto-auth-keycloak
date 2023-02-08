@@ -54,8 +54,9 @@ spec:
               mountPath: /keycloakVolume
           command: ["/bin/bash", "-c"]
           args:
-          - rm -rf keycloakVolume
-          - cp -r opt/jboss/. keycloakVolume
+            - cd keycloakVolume
+            - rm -rf .
+#            - cp -r opt/jboss/. keycloakVolume
       volumes:
       - name: keycloak-volume
         persistentVolumeClaim:
