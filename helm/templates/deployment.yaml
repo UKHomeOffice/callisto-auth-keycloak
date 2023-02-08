@@ -37,7 +37,7 @@ spec:
               containerPort: 8080
           volumeMounts:
             - name: keycloak-config-volume
-              mountPath: /opt
+              mountPath: /opt/
           env:
             - name: KEYCLOAK_USER
               value: admin
