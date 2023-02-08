@@ -37,7 +37,7 @@ spec:
               containerPort: 8080
           volumeMounts:
             - mountPath: /opt/
-              name: keycloak-volume
+              name: keycloak-config-volume
           env:
             - name: KEYCLOAK_USER
               value: admin
@@ -50,14 +50,12 @@ spec:
           image: {{ .Values.image.repo }}keycloak:{{ .Values.keycloakVersion }}
           imagePullPolicy: Always
           volumeMounts:
-            - name: keycloak-volume
+            - name: keycloak-config-volume
               mountPath: /keycloakVolume
           command: ["/bin/bash", "-c"]
           args:
-            - cd keycloakVolume
-            - rm -rf .
-#            - cp -r opt/jboss/. keycloakVolume
+            - cp -r opt/jboss/. keycloakVolume
       volumes:
-      - name: keycloak-volume
+      - name: keycloak-config-volume
         persistentVolumeClaim:
           claimName: {{ .Release.Name }}-volume-claim

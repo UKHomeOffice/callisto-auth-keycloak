@@ -6,7 +6,7 @@ metadata:
 spec:
   storageClassName: gp2-encrypted
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   volumeMode: Filesystem
   resources:
     requests:
