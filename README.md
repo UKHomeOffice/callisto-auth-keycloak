@@ -81,8 +81,8 @@ gh workflow run "Keycloak AMD and ARM" --ref <git_branch> -f keycloak_version=<d
 
 ## Branch deployments
 
-If for some reason the keycloak config volume gets deleted or the callisto-keycloak helm chart is uninstalled,
-we will need to run an init container which copies the keycloak config into the volume.
+If for some reason the keycloak config volume gets deleted, we will need to run an init container which copies the 
+keycloak config into the volume.
 
 The following code will need adding inside the spec section of `deployment.yaml`: 
 
