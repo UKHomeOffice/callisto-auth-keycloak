@@ -44,9 +44,5 @@ resource "keycloak_realm" "callisto" {
 module "test_users" {
   source         = "./modules/terraform/test_users"
   count          = var.include_test_users ? 1 : 0
-  callisto_realm = var.callisto_realm
-
-  depends_on = [
-    keycloak_realm.callisto
-  ]
+  callisto_realm = keycloak_realm.callisto.id
 }
