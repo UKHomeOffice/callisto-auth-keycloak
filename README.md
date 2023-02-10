@@ -96,7 +96,7 @@ The following code will need adding inside the spec section of `deployment.yaml`
               mountPath: /keycloakVolume
           command: ["/bin/bash", "-c"]
           args:
-            - cp -r opt/jboss/. keycloakVolume
+            - cp -r opt/jboss/keycloak/standalone/data/. keycloakVolume
 ```
 
 It will only need to be run once and the code can be removed after the init container has run. The reason for doing this

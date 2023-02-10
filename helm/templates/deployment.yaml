@@ -20,6 +20,16 @@ spec:
       securityContext:
         runAsUser: 1000
         runAsGroup: 1000
+      initContainers:
+        - name: keycloak-persistent-volume
+          image: {{ .Values.image.repo }}keycloak:{{ .Values.keycloakVersion }}
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: keycloak-config-volume
+              mountPath: /keycloakVolume
+          command: ["/bin/bash", "-c"]
+          args:
+            - cp -r opt/jboss/keycloak/standalone/data/. keycloakVolume
       containers:
         - name: keycloak
           image: {{ .Values.image.repo }}keycloak:{{ .Values.keycloakVersion }}
@@ -36,7 +46,7 @@ spec:
               containerPort: 8080
           volumeMounts:
             - name: keycloak-config-volume
-              mountPath: /opt/jboss
+              mountPath: /opt/jboss/keycloak/standalone/data
           env:
             - name: KEYCLOAK_USER
               value: admin
@@ -47,4 +57,4 @@ spec:
       volumes:
         - name: keycloak-config-volume
           persistentVolumeClaim:
-            claimName: {{ .Release.Name }}-persistent-volume-claim
+            claimName: {{ .Release.Name }}-pv-claim
