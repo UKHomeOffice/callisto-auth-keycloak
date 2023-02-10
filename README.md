@@ -81,8 +81,10 @@ gh workflow run "Keycloak AMD and ARM" --ref <git_branch> -f keycloak_version=<d
 
 ## Branch deployments
 
-If for some reason the keycloak config volume gets deleted or the persistent volume claim is changed, we will need to 
-run the following commands to create the Callisto realm and terraform client:
+If for some reason the installation is corrupted, to start again, run `helm uninstall callisto-keycloak` then rerun the 
+last successful Drone build containing the callisto-keycloak-dev-deploy pipeline. 
+
+To create the Callisto realm and terraform client, run the following commands locally from the `/config` directory:
 
 ```shell
 terraform init -reconfigure -backend-config="region=eu-west-2" -backend-config="access_key=*****" -backend-config="secret_key=*****" -backend-config="bucket=*****" -backend-config="key=terraform/build/callisto-auth-keycloak/callisto-branch"
@@ -93,3 +95,6 @@ KEYCLOAK_URL=https://keycloak.dev.callisto-notprod.homeoffice.gov.uk KEYCLOAK_CL
 ```
 
 Access key and secret key for the terraform s3 bucket can be found in Kubernetes secrets.
+
+You will also need to get the client secret (found in the credentials tab) from the terraform-client in the Callisto 
+realm in keycloak, and update the `KEYCLOAK_CLIENT_SECRET` in Drone.

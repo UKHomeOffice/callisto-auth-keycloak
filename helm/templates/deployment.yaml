@@ -21,16 +21,6 @@ spec:
         fsGroup: 1000
         runAsUser: 1000
         runAsGroup: 1000
-      initContainers:
-        - name: keycloak-persistent-volume
-          image: {{ .Values.image.repo }}keycloak:{{ .Values.keycloakVersion }}
-          imagePullPolicy: Always
-          volumeMounts:
-            - name: keycloak-volume
-              mountPath: /keycloakVolume
-          command: ["/bin/bash", "-c"]
-          args:
-            - cp -nr opt/jboss/keycloak/standalone/data/. keycloakVolume
       containers:
         - name: keycloak
           image: {{ .Values.image.repo }}keycloak:{{ .Values.keycloakVersion }}
