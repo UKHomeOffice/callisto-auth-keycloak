@@ -21,7 +21,7 @@ spec:
         runAsUser: 1000
         runAsGroup: 1000
       initContainers:
-        - name: keycloak-persistent-volume
+        - name: keycloak-persistent-volume-test
           image: {{ .Values.image.repo }}keycloak:{{ .Values.keycloakVersion }}
           imagePullPolicy: Always
           volumeMounts:
