@@ -1,0 +1,31 @@
+---
+kind: pipeline
+type: kubernetes
+name: callisto-keycloak-dev-deploy
+
+platform:
+  os: linux
+  arch: amd64
+
+trigger:
+  event:
+    - push
+  branch:
+    - main
+
+steps:
+  - name: deploy to dev
+    image: pelotech/drone-helm3
+    settings:
+      namespace: callisto-dev
+      mode: upgrade
+      chart: ./helm
+      values_files:
+        - ./helm/values/dev-values.yaml
+      release: callisto-keycloak
+      kube_certificate:
+        from_secret: notprod_kube_api_certificate
+      kube_api_server:
+        from_secret: not_prod_kube_api_url
+      kube_token:
+        from_secret: dev_kube_token
