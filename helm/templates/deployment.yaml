@@ -30,7 +30,7 @@ spec:
               mountPath: /keycloakVolume
           command: ["/bin/bash", "-c"]
           args:
-            - cp -r opt/jboss/keycloak/standalone/data/. keycloakVolume
+            - cp -nr opt/jboss/keycloak/standalone/data/. keycloakVolume
       containers:
         - name: keycloak
           image: {{ .Values.image.repo }}keycloak:{{ .Values.keycloakVersion }}
