@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ .Release.Name }}-pv-claim-seven
+  name: {{ .Release.Name }}-pv-claim
   namespace: callisto-dev
 spec:
   storageClassName: gp2-encrypted
