@@ -25,7 +25,7 @@ spec:
           image: {{ .Values.image.repo }}keycloak:{{ .Values.keycloakVersion }}
           imagePullPolicy: Always
           volumeMounts:
-            - name: keycloak-config-volume-test-four
+            - name: keycloak-config-volume-test-five
               mountPath: /keycloakVolume
           command: ["/bin/bash", "-c"]
           args:
@@ -45,7 +45,7 @@ spec:
             - name: http
               containerPort: 8080
           volumeMounts:
-            - name: keycloak-config-volume-test-four
+            - name: keycloak-config-volume-test-five
               mountPath: /opt/jboss
           env:
             - name: KEYCLOAK_USER
@@ -55,6 +55,6 @@ spec:
             - name: PROXY_ADDRESS_FORWARDING
               value: 'true'
       volumes:
-        - name: keycloak-config-volume-test-four
+        - name: keycloak-config-volume-test-five
           persistentVolumeClaim:
-            claimName: {{ .Release.Name }}-pv-claim
+            claimName: {{ .Release.Name }}-pv-claim-five
