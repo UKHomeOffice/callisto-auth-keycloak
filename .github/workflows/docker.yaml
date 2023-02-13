@@ -4,7 +4,6 @@ on:
     branches:
       - main
       - "**eahw-**"
-      - "**EAHW-**"
 
 jobs:
   build-docker-image:
@@ -102,7 +101,7 @@ jobs:
           if [ "$GITHUB_REF_NAME" = "main" ]
           then
             TAG=latest
-          elif [[ $GITHUB_REF_NAME =~ (EAHW-[0-9]*|eahw-[0-9]*) ]]
+          elif [[ $GITHUB_REF_NAME =~ (eahw-[0-9]*) ]]
           then
             TAG=${match/#E/E}${BASH_REMATCH/#E/E}
           else
