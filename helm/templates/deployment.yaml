@@ -1,0 +1,51 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    app: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+        runAsGroup: 1000
+      containers:
+        - name: keycloak
+          image: {{ .Values.image.repo }}keycloak:{{ .Values.keycloakVersion }}
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: '512Mi'
+              cpu: '500m'
+            limits:
+              memory: '1Gi'
+              cpu: '1500m'
+          ports:
+            - name: http
+              containerPort: 8080
+          volumeMounts:
+            - name: keycloak-volume
+              mountPath: /opt/jboss/keycloak/standalone/data
+          env:
+            - name: KEYCLOAK_USER
+              value: admin
+            - name: KEYCLOAK_PASSWORD
+              value: admin
+            - name: PROXY_ADDRESS_FORWARDING
+              value: 'true'
+      volumes:
+        - name: keycloak-volume
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-pvc

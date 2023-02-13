@@ -26,7 +26,7 @@ resource "keycloak_realm" "callisto" {
   security_defenses {
     headers {
       x_frame_options                     = "SAMEORIGIN"
-      content_security_policy             = "frame-src 'self'; frame-ancestors 'self' ${var.callisto_url}; object-src 'none';"
+      content_security_policy             = "frame-src 'self'; frame-ancestors 'self' %{if var.callisto_url != ""}${var.callisto_url}%{else}*%{endif}; object-src 'none';"
       content_security_policy_report_only = ""
       x_content_type_options              = "nosniff"
       x_robots_tag                        = "none"
@@ -44,9 +44,5 @@ resource "keycloak_realm" "callisto" {
 module "test_users" {
   source         = "./modules/terraform/test_users"
   count          = var.include_test_users ? 1 : 0
-  callisto_realm = var.callisto_realm
-
-  depends_on = [
-    keycloak_realm.callisto
-  ]
+  callisto_realm = keycloak_realm.callisto.id
 }
