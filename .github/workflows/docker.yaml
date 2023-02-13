@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - main
-      - '**EAHW-**'
+      - "**eahw-**"
 
 jobs:
   build-docker-image:
@@ -21,102 +21,94 @@ jobs:
       TF_VAR_callisto_realm: callisto
       TF_VAR_callisto_url: https://web.callisto.localhost
       TF_VAR_include_test_users: true
-      ECR_REGISTRY: 340268328991.dkr.ecr.eu-west-2.amazonaws.com 
-      DOCKER_REPO: callisto/auth-keycloak
+      DOCKER_REGISTRY: quay.io/ukhomeofficedigital
+      DOCKER_REPO: callisto-auth-keycloak
 
     services:
       localstack:
         image: localstack/localstack
         options: --name localstack
         ports:
-        - 4566
+          - 4566
         env:
           SERVICES: s3
 
     steps:
-    - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
 
-    - name: Configure AWS credentials (callisto/keycloak repo)
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.CALLISTO_KEYCLOAK_DEPLOY_BOT_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.CALLISTO_KEYCLOAK_DEPLOY_BOT_SECRET_ACCESS_KEY }}
-        aws-region: eu-west-2
+      - name: Start Keycloak container
+        run: docker run --name keycloak -p 9090:8080 -d --env KEYCLOAK_USER=admin --env KEYCLOAK_PASSWORD=admin ${DOCKER_REGISTRY}/callisto-keycloak:15.0.2
 
-    - name: Login to Amazon ECR (callisto/keycloak repo)
-      id: login-ecr-keycloak
-      uses: aws-actions/amazon-ecr-login@v1
+      - name: Wait for Keycloak
+        run: (docker logs -f keycloak &) | grep -m 1 "Admin console listening on"
+        timeout-minutes: 1
 
-    - name: Setup Keycloak container
-      run: docker run --name keycloak -p 9090:8080 -d --env KEYCLOAK_USER=admin --env KEYCLOAK_PASSWORD=admin ${ECR_REGISTRY}/callisto/keycloak:15.0.2
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.CALLISTO_KEYCLOAK_DEPLOY_BOT_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.CALLISTO_KEYCLOAK_DEPLOY_BOT_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-2
 
-    - name: Wait for Keycloak
-      run: (docker logs -f keycloak &) | grep -m 1 "Admin console listening on"
-      timeout-minutes: 1
+      - name: Create S3 local bucket
+        run: |
+          aws s3api create-bucket --bucket terraform --endpoint-url http://localhost:${{ job.services.localstack.ports[4566] }} --create-bucket-configuration LocationConstraint=eu-west-2
 
-    - name: Create S3 local bucket
-      run: |
-        aws s3api create-bucket --bucket terraform --endpoint-url http://localhost:${{ job.services.localstack.ports[4566] }} --create-bucket-configuration LocationConstraint=eu-west-2
+      - uses: hashicorp/setup-terraform@v2
 
-    - uses: hashicorp/setup-terraform@v2
+      - name: Terraform Init
+        id: init
+        run: terraform init -reconfigure -backend-config="endpoint=http://localhost:${{ job.services.localstack.ports[4566] }}" -backend-config="region=eu-west-2" -backend-config="skip_credentials_validation=true" -backend-config="skip_metadata_api_check=true" -backend-config="bucket=terraform" -backend-config="key=terraform.tfstate" -backend-config="force_path_style=true"
 
-    - name: Terraform Init
-      id: init
-      run: terraform init -reconfigure -backend-config="endpoint=http://localhost:${{ job.services.localstack.ports[4566] }}" -backend-config="region=eu-west-2" -backend-config="skip_credentials_validation=true" -backend-config="skip_metadata_api_check=true" -backend-config="bucket=terraform" -backend-config="key=terraform.tfstate" -backend-config="force_path_style=true"
+      - name: Terraform Plan
+        id: plan
+        env:
+          KEYCLOAK_URL: http://localhost:9090
+        run: terraform plan -input=false -out=tfplan
 
-    - name: Terraform Plan
-      id: plan
-      env:
-        KEYCLOAK_URL: http://localhost:9090
-      run: terraform plan -input=false -out=tfplan
+      - name: Terraform Apply
+        id: apply
+        env:
+          KEYCLOAK_URL: http://localhost:9090
+        run: terraform apply -input=false -auto-approve -input=false tfplan
 
-    - name: Terraform Apply
-      id: apply
-      env:
-        KEYCLOAK_URL: http://localhost:9090
-      run: terraform apply -input=false -auto-approve -input=false tfplan
+      - name: Log in to Quay.io
+        uses: redhat-actions/podman-login@v1
+        with:
+          username: ${{ secrets.QUAY_ROBOT_NAME }}
+          password: ${{ secrets.QUAY_ROBOT_TOKEN }}
+          registry: ${{ env.DOCKER_REGISTRY }}
 
-    - name: Docker commit
-      run: |
-        docker stop keycloak
-        docker commit keycloak ${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
-      shell: bash
+      - name: Docker Stop and Commit
+        run: |
+          docker stop keycloak
+          docker commit keycloak ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
+        shell: bash
 
-    - name: Build ARM image
-      uses: docker/build-push-action@v3
-      with:
-          registry: ''
+      - name: Build ARM image
+        uses: docker/build-push-action@v3
+        with:
+          registry: quay.io
           platforms: linux/arm64
           context: .
           push: false
-          tags: ${{ env.DOCKER_REPO }}:${{ github.sha }}-arm
+          tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_REPO }}:${{ github.sha }}-arm
           build-args: |
-            image=${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
+            image=${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_REPO }}:${{ github.sha }}-amd
 
-    - name: Configure AWS credentials (callisto/auth-keycloak repo)
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.CALLISTO_AUTH_KEYCLOAK_DEPLOY_BOT_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.CALLISTO_AUTH_KEYCLOAK_DEPLOY_BOT_SECRET_ACCESS_KEY }}
-        aws-region: eu-west-2
-
-    - name: Login to Amazon ECR (callisto/auth-keycloak repo)
-      id: login-ecr-auth-keycloak
-      uses: aws-actions/amazon-ecr-login@v1
-
-    - name: Push multi-arch images and manifest to ECR Registry (callisto/auth-keycloak repo)
-      run: |
-        if [ "$GITHUB_REF_NAME" = "main" ]
-        then
-          TAG=latest
-        elif [[ $GITHUB_REF_NAME =~ (EAHW-[0-9]*) ]]
-        then
-          TAG=${match/#E/E}${BASH_REMATCH/#E/E}
-        else
-          TAG=${GITHUB_SHA}
-        fi
-        docker tag ${DOCKER_REPO}:${GITHUB_SHA}-amd ${ECR_REGISTRY}/${DOCKER_REPO}:${GITHUB_SHA}-amd
-        docker tag ${DOCKER_REPO}:${GITHUB_SHA}-arm ${ECR_REGISTRY}/${DOCKER_REPO}:${GITHUB_SHA}-arm
-        docker image push --all-tags ${ECR_REGISTRY}/${DOCKER_REPO}
-        docker manifest create ${ECR_REGISTRY}/${DOCKER_REPO}:${TAG} --amend ${ECR_REGISTRY}/${DOCKER_REPO}:${GITHUB_SHA}-amd --amend ${ECR_REGISTRY}/${DOCKER_REPO}:${GITHUB_SHA}-arm
-        docker manifest push ${ECR_REGISTRY}/${DOCKER_REPO}:${TAG}
+      - name: Push multi-arch images and manifest to QUAY Registry
+        run: |
+          if [ "$GITHUB_REF_NAME" = "main" ]
+          then
+            TAG=latest
+          elif [[ $GITHUB_REF_NAME =~ (eahw-[0-9]*) ]]
+          then
+            TAG=${match/#E/E}${BASH_REMATCH/#E/E}
+          else
+            TAG=${GITHUB_SHA}
+          fi
+          docker tag ${DOCKER_REGISTRY}/${DOCKER_REPO}:${GITHUB_SHA}-amd ${DOCKER_REGISTRY}/${DOCKER_REPO}:${GITHUB_SHA}-amd
+          docker tag ${DOCKER_REGISTRY}/${DOCKER_REPO}:${GITHUB_SHA}-arm ${DOCKER_REGISTRY}/${DOCKER_REPO}:${GITHUB_SHA}-arm
+          docker image push --all-tags ${DOCKER_REGISTRY}/${DOCKER_REPO}
+          docker manifest create ${DOCKER_REGISTRY}/${DOCKER_REPO}:${TAG} --amend ${DOCKER_REGISTRY}/${DOCKER_REPO}:${GITHUB_SHA}-amd --amend ${DOCKER_REGISTRY}/${DOCKER_REPO}:${GITHUB_SHA}-arm
+          docker manifest push ${DOCKER_REGISTRY}/${DOCKER_REPO}:${TAG}
