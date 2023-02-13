@@ -23,7 +23,7 @@ spec:
         runAsGroup: 1000
       containers:
         - name: keycloak
-          image: {{ .Values.image.repo }}keycloak:{{ .Values.keycloakVersion }}
+          image: {{ .Values.image.repo }}callisto-keycloak:{{ .Values.keycloakVersion }}
           imagePullPolicy: Always
           resources:
             requests:
