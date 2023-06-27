@@ -106,24 +106,3 @@ Access key and secret key for the terraform s3 bucket can be found in Kubernetes
 
 You will also need to get the client secret (found in the credentials tab) from the terraform-client in the Callisto
 realm in keycloak, and update the `KEYCLOAK_CLIENT_SECRET` in Drone.
-
-## <a name="headAllRepo"></a> All Callisto repositories
-
-- https://github.com/UKHomeOffice/callisto-accruals-restapi
-- https://github.com/UKHomeOffice/callisto-balance-calculator
-- https://github.com/UKHomeOffice/callisto-person-restapi
-- https://github.com/UKHomeOffice/callisto-timecard-restapi
-- https://github.com/UKHomeOffice/callisto-accruals-person-consumer
-- https://github.com/UKHomeOffice/callisto-auth-keycloak
-- https://github.com/UKHomeOffice/callisto-build-github
-- https://github.com/UKHomeOffice/callisto-kafka-commons
-- https://github.com/UKHomeOffice/callisto-devops
-- https://github.com/UKHomeOffice/callisto-docs
-- https://github.com/UKHomeOffice/callisto-helm-charts
-- https://github.com/UKHomeOffice/callisto-ingress-nginx
-- https://github.com/UKHomeOffice/callisto-jparest
-- https://github.com/UKHomeOffice/callisto-localdev
-- https://github.com/UKHomeOffice/callisto-postman-collections
-- https://github.com/UKHomeOffice/callisto-service-template
-- https://github.com/UKHomeOffice/callisto-ui
-- https://github.com/UKHomeOffice/callisto-ui-nginx
