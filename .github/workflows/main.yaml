@@ -1,4 +1,7 @@
 name: Deploy
+on:
+  workflow_dispatch:
+# to reinstate add the following and endable in github 
 # on:
 #   push:
 #     branches:

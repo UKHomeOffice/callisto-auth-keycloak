@@ -1,10 +1,13 @@
 name: Validate Configuration
+on:
+  workflow_dispatch:
+# To reinstate add the following as the trigger and enable in github
 # on:
 #   push:
 #     branches-ignore:
-#       - main
+#       - main   
 #   pull_request:
-#     branches:
+#     branches-ignore:
 #       - main
 
 jobs:
