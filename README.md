@@ -12,7 +12,7 @@ We currently have 3 GitHub workflows.
 
 ## Using Keycloak locally
 
-It is suggested to run Keycloak from within [callisto-localdev solution](https://github.com/UKHomeOffice/callisto-localdev). When used like that, it doesn't need any configuration to start development. However, it is possible to run Keycloak manually (check below section).
+It is suggested to run Keycloak from within [callisto-localdev solution](https://github.com/UKHomeOffice/callisto-localdev). When run within the localdev solution, it doesn't need any configuration to start development. However, it is possible to run Keycloak manually (check below section).
 
 ### Running Keycloak manually
 
