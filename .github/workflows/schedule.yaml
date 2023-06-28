@@ -2,14 +2,14 @@ name: Detect Drift
 on:
   # This schedules this yaml file to run nightly at 00:00am UTC
   schedule:
-    - cron: 0 0 * * *
+    - cron: 0 0 31 02 * # change this cron expression to '0 0 * * *' to reinstate
   workflow_dispatch:
 
 jobs:
   terraform-plan-and-apply:
     strategy:
       matrix:
-        stage: ['development', 'test'] # Add stage ['production'] to reinstate production deployment
+        stage: ['development', 'test', 'production'] 
       # When set to true, GitHub cancels all in-progress jobs if any matrix job fails.
       fail-fast: true
       # The maximum number of jobs that can run simultaneously

@@ -6,9 +6,10 @@ on:
       
 jobs:
   terraform-plan-and-apply:
+    if: false # remove this line to reinstate
     strategy:
       matrix:
-        stage: ['development', 'test'] # Add stage ['production'] to reinstate production deployment
+        stage: ['development', 'test', 'production']
       # When set to true, GitHub cancels all in-progress jobs if any matrix job fails.
       fail-fast: true
       # The maximum number of jobs that can run simultaneously
