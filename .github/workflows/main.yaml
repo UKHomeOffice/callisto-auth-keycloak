@@ -6,7 +6,6 @@ name: Deploy
       
 jobs:
   terraform-plan-and-apply:
-    if: false # remove this line to reinstate
     strategy:
       matrix:
         stage: ['development', 'test', 'production']

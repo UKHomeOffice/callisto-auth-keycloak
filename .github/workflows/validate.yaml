@@ -9,7 +9,6 @@ name: Validate Configuration
 
 jobs:
   terraform-validate:
-    if: false # remove this line to reinstate
     strategy:
       matrix:
         stage: ['development', 'test', 'production']
