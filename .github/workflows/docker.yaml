@@ -1,9 +1,11 @@
 name: Docker
 on:
-  push:
-    branches:
-      - main
-      - "**eahw-**"
+  # push:
+  #   branches:
+  #     - main
+  #     - "**eahw-**"
+  workflow:
+    dispatch:
 
 jobs:
   build-docker-image:

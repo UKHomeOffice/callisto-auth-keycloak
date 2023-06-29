@@ -33,7 +33,7 @@ jobs:
           password: ${{ secrets.QUAY_ROBOT_TOKEN }}
           registry: quay.io/ukhomeofficedigital
 
-      - name: Build and Push multi-arch image to Amazon ECR
+      - name: Build and Push multi-arch image to Quay
         run: |
           cd server
           docker buildx build --push --platform linux/amd64,linux/arm64 --tag quay.io/ukhomeofficedigital/callisto-keycloak:'${{ inputs.keycloak_version }}' .
