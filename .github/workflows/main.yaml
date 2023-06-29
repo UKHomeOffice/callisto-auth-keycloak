@@ -1,8 +1,10 @@
 name: Deploy
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+  # to reinstate uncomment the following and enable in github
+  # push:
+  #   branches:
+  #     - main
       
 jobs:
   terraform-plan-and-apply:
