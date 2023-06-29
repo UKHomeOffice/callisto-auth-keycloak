@@ -42,6 +42,7 @@ jobs:
       id: fmt
       run: terraform fmt -check -recursive -diff
 
+    # To reinstate changes uncomment the following 
     # - name: Terraform Plan
     #   if: github.event_name == 'pull_request'
     #   id: plan

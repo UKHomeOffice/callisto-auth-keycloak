@@ -35,9 +35,9 @@ jobs:
       id: workspace
       run: terraform workspace dev
 
-    # - name: Terraform Init
-    #   id: init
-    #   run: terraform init -reconfigure -backend-config="region=${{ secrets.tf_be_region }}" -backend-config="access_key=${{ secrets.tf_be_access_key }}" -backend-config="secret_key=${{ secrets.tf_be_secret_key }}" -backend-config="bucket=${{ secrets.tf_be_bucket }}" -backend-config="key=${{ secrets.tf_be_bucket_key }}"
+    - name: Terraform Init
+      id: init
+      run: terraform init -reconfigure -backend-config="region=${{ secrets.tf_be_region }}" -backend-config="access_key=${{ secrets.tf_be_access_key }}" -backend-config="secret_key=${{ secrets.tf_be_secret_key }}" -backend-config="bucket=${{ secrets.tf_be_bucket }}" -backend-config="key=${{ secrets.tf_be_bucket_key }}"
 
     - name: Terraform Validate
       id: validate
@@ -47,6 +47,7 @@ jobs:
       id: plan
       run: terraform plan -input=false -out=tfplan
 
+    # To reinstate changes uncomment the following 
     # - name: Terraform Apply
     #   id: apply
     #   run: terraform apply -input=false -auto-approve tfplan
