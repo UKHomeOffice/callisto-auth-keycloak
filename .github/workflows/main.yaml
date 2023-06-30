@@ -10,7 +10,7 @@ jobs:
   terraform-plan-and-apply:
     strategy:
       matrix:
-        stage: ["development", "test", "production"]
+        stage: ["development", "test"] # To deploy to prod, put back "production" environment.
       # When set to true, GitHub cancels all in-progress jobs if any matrix job fails.
       fail-fast: true
       # The maximum number of jobs that can run simultaneously
