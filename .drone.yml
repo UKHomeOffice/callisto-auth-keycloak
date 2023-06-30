@@ -7,9 +7,19 @@ platform:
   os: linux
   arch: amd64
 
+
 trigger:
   event:
-    - push
+    exclude:
+      - push
+      - pull_request
+      - tag
+      - promote
+      - rollback
+# to reinstate uncomment the following 
+# trigger:
+#   event:
+#     - push
   branch:
     - main
 
