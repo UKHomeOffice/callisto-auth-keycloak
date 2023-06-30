@@ -11,7 +11,7 @@ jobs:
   terraform-validate:
     strategy:
       matrix:
-        stage: ['development', 'test', 'production']
+        stage: ["development", "test", "production"]
     # set the environment to use (environment must exist and be named the same as the stage here)
     environment:
       name: ${{ matrix.stage }}
@@ -27,22 +27,23 @@ jobs:
       TF_VAR_callisto_realm: ${{ secrets.tf_kc_realm }}
       TF_VAR_callisto_url: ${{ secrets.tf_callisto_url }}
     steps:
-    - uses: actions/checkout@v2
-    - uses: hashicorp/setup-terraform@v2
+      - uses: actions/checkout@v2
+      - uses: hashicorp/setup-terraform@v2
 
-    - name: Terraform Init
-      id: init
-      run: terraform init -reconfigure -backend-config="region=${{ secrets.tf_be_region }}" -backend-config="access_key=${{ secrets.tf_be_access_key }}" -backend-config="secret_key=${{ secrets.tf_be_secret_key }}" -backend-config="bucket=${{ secrets.tf_be_bucket }}" -backend-config="key=${{ secrets.tf_be_bucket_key }}"
+      - name: Terraform Init
+        id: init
+        #run: terraform init -reconfigure -backend-config="region=${{ secrets.tf_be_region }}" -backend-config="access_key=${{ secrets.tf_be_access_key }}" -backend-config="secret_key=${{ secrets.tf_be_secret_key }}" -backend-config="bucket=${{ secrets.tf_be_bucket }}" -backend-config="key=${{ secrets.tf_be_bucket_key }}"
+        run: terraform init -backend=false
 
-    - name: Terraform Validate
-      id: validate
-      run: terraform validate
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate
 
-    - name: Terraform Format
-      id: fmt
-      run: terraform fmt -check -recursive -diff
+      - name: Terraform Format
+        id: fmt
+        run: terraform fmt -check -recursive -diff
 
-    # To reinstate changes uncomment the following 
+    # To reinstate changes uncomment the following
     # - name: Terraform Plan
     #   if: github.event_name == 'pull_request'
     #   id: plan
