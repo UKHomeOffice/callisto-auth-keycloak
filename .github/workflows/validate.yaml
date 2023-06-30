@@ -33,7 +33,7 @@ jobs:
       - name: Terraform Init
         id: init
         #run: terraform init -reconfigure -backend-config="region=${{ secrets.tf_be_region }}" -backend-config="access_key=${{ secrets.tf_be_access_key }}" -backend-config="secret_key=${{ secrets.tf_be_secret_key }}" -backend-config="bucket=${{ secrets.tf_be_bucket }}" -backend-config="key=${{ secrets.tf_be_bucket_key }}"
-        run: terraform init -backend=false
+        run: terraform init #-backend=false # As the S3 buckets are decommissioned, backend is set to false.
 
       - name: Terraform Validate
         id: validate
