@@ -11,7 +11,7 @@ jobs:
   terraform-validate:
     strategy:
       matrix:
-        stage: ["development", "test"] # To validate config for prod, put back "production" environment.
+        stage: ["development", "test", "production"]
     # set the environment to use (environment must exist and be named the same as the stage here)
     environment:
       name: ${{ matrix.stage }}
